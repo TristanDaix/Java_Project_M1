@@ -2,6 +2,7 @@ package game.fate.utils;
 
 import game.fate.exceptions.UnknowServantClassException;
 import game.fate.models.Servant;
+import game.fate.models.servantClass.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -53,8 +54,9 @@ public class CsvReader {
      *
      * @param line The servant's data line
      * @return The servant object
-     * @throws NumberFormatException
-     * @throws UnknowServantClassException
+     * @throws NumberFormatException          Error in number format
+     * @throws ArrayIndexOutOfBoundsException Error in number of arguments
+     * @throws UnknowServantClassException    Error in servant class
      */
     private static Servant getServant(String line) throws NumberFormatException, ArrayIndexOutOfBoundsException, UnknowServantClassException {
         String[] fields = line.split(",");
@@ -66,13 +68,20 @@ public class CsvReader {
         int attack = Integer.parseInt(fields[4].trim());
 
         return switch (servantClass.toLowerCase()) {
-            case "saber" -> new Servant();
-            case "archer" -> new Servant();
-            case "lancer" -> new Servant();
-            case "rider" -> new Servant();
-            case "caster" -> new Servant();
-            case "assassin" -> new Servant();
-            case "berserker" -> new Servant();
+            case "saber" -> new Saber();
+            case "archer" -> new Archer();
+            case "lancer" -> new Lancer();
+            case "rider" -> new Rider();
+            case "caster" -> new Caster();
+            case "assassin" -> new Assassin();
+            case "berserker" -> new Berserker();
+            case "ruler" -> new Ruler();
+            case "avenger" -> new Avenger();
+            case "mooncancer" -> new MoonCancer();
+            case "alterego" -> new AlterEgo();
+            case "foreigner" -> new Foreigner();
+            case "pretender" -> new Pretender();
+            case "shielder" -> new Shielder();
             default -> throw new UnknowServantClassException(servantClass);
         };
     }

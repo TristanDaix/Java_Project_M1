@@ -20,6 +20,7 @@ public class GameUI {
 
     /**
      * Display the main menu of the game
+     *
      * @return The player input
      */
     public int showMainMenu() {
@@ -35,6 +36,7 @@ public class GameUI {
 
     /**
      * Display the menu to choose a servant
+     *
      * @param servants The servant list
      * @return The selected servant
      */
@@ -56,6 +58,7 @@ public class GameUI {
 
     /**
      * Display the action possible during a fight
+     *
      * @return The player input
      */
     public int showCombatMenu() {
@@ -69,6 +72,7 @@ public class GameUI {
 
     /**
      * Display a message
+     *
      * @param message The message to display
      */
     public void printMessage(String message) {
@@ -77,6 +81,7 @@ public class GameUI {
 
     /**
      * Display the game header
+     *
      * @param title Title to put inside the header
      */
     public void printHeader(String title) {
@@ -87,6 +92,7 @@ public class GameUI {
 
     /**
      * Avoid crash if the user enter a string instead of an int
+     *
      * @return The user's input
      */
     private int readIntInput() {
