@@ -16,6 +16,7 @@ public enum ServantClassStat { // TODO : load value from csv
     MOONCANCER(1.0, 1.0, 1.0),
     ALTEREGO(1.0, 1.0, 1.0),
     FOREIGNER(1.0, 1.0, 1.0),
+    PRETENDER(1.0, 1.0, 1.0),
     SHIELDER(1.0, 1.0, 1.0);
 
     private final double attackMultiplier;

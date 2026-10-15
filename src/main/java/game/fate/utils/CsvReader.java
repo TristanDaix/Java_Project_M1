@@ -2,6 +2,7 @@ package game.fate.utils;
 
 import game.fate.exceptions.UnknowServantClassException;
 import game.fate.models.Servant;
+import game.fate.models.ServantClassStat;
 import game.fate.models.servantClass.*;
 
 import java.io.IOException;
@@ -64,24 +65,24 @@ public class CsvReader {
         int id = Integer.parseInt(fields[0].trim());
         String name = fields[1].trim();
         String servantClass = fields[2].trim();
-        int hp = Integer.parseInt(fields[3].trim());
-        int attack = Integer.parseInt(fields[4].trim());
+        int maxHp = Integer.parseInt(fields[3].trim());
+        int atk = Integer.parseInt(fields[4].trim());
 
         return switch (servantClass.toLowerCase()) {
-            case "saber" -> new Saber();
-            case "archer" -> new Archer();
-            case "lancer" -> new Lancer();
-            case "rider" -> new Rider();
-            case "caster" -> new Caster();
-            case "assassin" -> new Assassin();
-            case "berserker" -> new Berserker();
-            case "ruler" -> new Ruler();
-            case "avenger" -> new Avenger();
-            case "mooncancer" -> new MoonCancer();
-            case "alterego" -> new AlterEgo();
-            case "foreigner" -> new Foreigner();
-            case "pretender" -> new Pretender();
-            case "shielder" -> new Shielder();
+            case "saber" -> new Saber(id, name, ServantClassStat.SABER, maxHp, atk);
+            case "archer" -> new Archer(id, name, ServantClassStat.ARCHER, maxHp, atk);
+            case "lancer" -> new Lancer(id, name, ServantClassStat.LANCER, maxHp, atk);
+            case "rider" -> new Rider(id, name, ServantClassStat.RIDER, maxHp, atk);
+            case "caster" -> new Caster(id, name, ServantClassStat.CASTER, maxHp, atk);
+            case "assassin" -> new Assassin(id, name, ServantClassStat.ASSASSIN, maxHp, atk);
+            case "berserker" -> new Berserker(id, name, ServantClassStat.BERSERKER, maxHp, atk);
+            case "ruler" -> new Ruler(id, name, ServantClassStat.RULER, maxHp, atk);
+            case "avenger" -> new Avenger(id, name, ServantClassStat.AVENGER, maxHp, atk);
+            case "mooncancer" -> new MoonCancer(id, name, ServantClassStat.MOONCANCER, maxHp, atk);
+            case "alterego" -> new AlterEgo(id, name, ServantClassStat.ALTEREGO, maxHp, atk);
+            case "foreigner" -> new Foreigner(id, name, ServantClassStat.FOREIGNER, maxHp, atk);
+            case "pretender" -> new Pretender(id, name, ServantClassStat.PRETENDER, maxHp, atk);
+            case "shielder" -> new Shielder(id, name, ServantClassStat.SHIELDER, maxHp, atk);
             default -> throw new UnknowServantClassException(servantClass);
         };
     }
