@@ -1,0 +1,38 @@
+id,name,servantClass,hp,attack
+1,Artoria Pendragon,Saber,1200,110
+2,Emiya,Archer,1050,95
+3,Cu Chulainn,Lancer,1100,90
+4,Medusa,Rider,1000,92
+5,Medea,Caster,900,85
+6,Sasaki Kojiro,Assassin,850,88
+7,Herakles,Berserker,1400,125
+8,Gilgamesh,Archer,1150,120
+9,Artoria Pendragon (Alter),Saber,1250,115
+10,Nero Claudius,Saber,1100,98
+11,Miyamoto Musashi,Saber,1180,112
+12,Ishtar,Archer,1080,105
+13,Napoleon,Archer,1120,102
+14,Super Orion,Archer,1300,130
+15,Karna,Lancer,1220,115
+16,Enkidu,Lancer,1200,112
+17,Ereshkigal,Lancer,1150,105
+18,Melusine,Lancer,1210,118
+19,Ushiwakamaru,Rider,950,94
+20,Francis Drake,Rider,1050,96
+21,Astolfo,Rider,980,90
+22,Iskandar,Rider,1250,108
+23,Tamamo no Mae,Caster,950,88
+24,Nitocris,Caster,920,86
+25,Leonardo Da Vinci,Caster,940,90
+26,Merlin,Caster,1000,85
+27,Jack the Ripper,Assassin,880,102
+28,The Old Man of the Mountain,Assassin,1150,105
+29,Kama,Assassin,990,100
+30,Morgan,Berserker,1280,122
+31,Lancelot,Berserker,1200,110
+32,Sakata Kintoki,Berserker,1250,118
+33,Lilith,Berserker,1120,120
+34,Jeanne d Arc,Ruler,1350,90
+35,Jeanne d Arc (Alter),Avenger,1150,118
+36,Edmond Dantes,Avenger,1100,115
+37,BB,MoonCancer,1050,95
