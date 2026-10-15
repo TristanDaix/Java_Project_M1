@@ -3,7 +3,7 @@ package game.fate.models;
 /**
  * Enumeration to store different constant for each servant class
  */
-public enum ServantClassStat { // TODO : load value from csv
+public enum ServantClassStats { // TODO : load value from csv
     SABER(1.0, 1.0, 1.0),
     ARCHER(1.0, 1.0, 1.0),
     LANCER(1.0, 1.0, 1.0),
@@ -30,7 +30,7 @@ public enum ServantClassStat { // TODO : load value from csv
      * @param criticalMultiplier Critical damage multiplier value
      * @param criticalRate       Critical rate value
      */
-    ServantClassStat(double attackMultiplier, double criticalMultiplier, double criticalRate) {
+    ServantClassStats(double attackMultiplier, double criticalMultiplier, double criticalRate) {
         this.attackMultiplier = attackMultiplier;
         this.criticalMultiplier = criticalMultiplier;
         this.criticalRate = criticalRate;

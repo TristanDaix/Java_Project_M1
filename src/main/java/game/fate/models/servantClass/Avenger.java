@@ -1,11 +1,11 @@
 package game.fate.models.servantClass;
 
 import game.fate.models.Servant;
-import game.fate.models.ServantClassStat;
+import game.fate.models.ServantClassStats;
 
 public class Avenger extends Servant {
 
-    public Avenger(int id, String name, ServantClassStat baseClassStats, int maxHp, int atk) {
+    public Avenger(int id, String name, ServantClassStats baseClassStats, int maxHp, int atk) {
         super(id, name, baseClassStats, maxHp, atk);
     }
 }

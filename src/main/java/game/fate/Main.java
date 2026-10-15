@@ -2,7 +2,7 @@ package game.fate;
 
 import game.fate.models.Servant;
 import game.fate.utils.CsvReader;
-import game.fate.utils.GameUI;
+import game.fate.services.GameUI;
 
 import java.util.List;
 

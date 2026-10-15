@@ -1,4 +1,4 @@
-package game.fate.utils;
+package game.fate.services;
 
 import game.fate.models.Servant;
 
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Manage the UI of the game
+ * Class to manage the UI of the game
  */
 public class GameUI {
     private final Scanner scanner;
