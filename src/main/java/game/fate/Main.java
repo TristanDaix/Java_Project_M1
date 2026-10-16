@@ -1,41 +1,40 @@
 package game.fate;
 
-import game.fate.models.Servant;
-import game.fate.utils.CsvReader;
-import game.fate.services.GameUI;
-
-import java.util.List;
+import game.fate.services.ConsoleManager;
+import game.fate.services.GameManager;
 
 public class Main {
+
     public static void main(String[] args) {
-        GameUI ui = new GameUI();
-
-        List<Servant> servants = CsvReader.loadServants("src/main/resources/servants.csv");
-
-        servants.forEach(System.out::println);
-
+        GameManager game = new GameManager();
+        ConsoleManager console = game.getConsole();
 
         boolean running = true;
         while (running) {
-            int choice = ui.showMainMenu();
+            int choice = console.showMainMenu();
 
             switch (choice) {
                 case 1:
-                    Servant master = ui.showSelectServantMenu(servants);
+                    console.printSystemDialogue("Starting game...");
+                    game.start();
                     break;
 
                 case 2:
-                    ui.printHeader("Continue");
-                    break;
-
-                case 3:
-                    ui.printMessage("Closing game. See you soon, Master !");
+                    console.printSystemDialogue("Closing game...");
+                    console.printSystemDialogue("See you soon, Master !");
                     running = false;
                     break;
 
                 default:
-                    ui.printMessage("Unknown option.");
+                    console.printSystemDialogue("Unknown option.");
             }
         }
     }
 }
+
+
+// TODO: COMMENTS
+// TODO: specific class behavior
+// TODO: class advantage
+// TODO: between fight
+// TODO: Win

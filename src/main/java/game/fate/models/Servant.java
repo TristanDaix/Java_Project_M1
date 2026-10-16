@@ -6,7 +6,7 @@ package game.fate.models;
 public abstract class Servant {
     private final int id;
     private final String name;
-    private final ServantClassStats baseClassStats;
+    private final ServantClass servantClass;
     private int hp;
     private int maxHp;
     private int atk;
@@ -19,19 +19,24 @@ public abstract class Servant {
      *
      * @param id Servant's id
      * @param name Servant's name
-     * @param baseClassStats Servant's class stats
+     * @param servantClass Servant's class stats
      * @param maxHp Servant's max hp
      * @param atk Servant's atk
      */
-    public Servant(int id, String name, ServantClassStats baseClassStats, int maxHp, int atk) {
+    public Servant(int id, String name, ServantClass servantClass, int maxHp, int atk) {
         this.id = id;
         this.name = name;
-        this.baseClassStats = baseClassStats;
+        this.servantClass = servantClass;
         this.hp = maxHp;
         this.maxHp = maxHp;
         this.atk = atk;
         this.level = 1;
         this.exp = 0.0;
+    }
+
+    @Override
+    public String toString() {
+        return servantClass + " " + this.name + " (" + this.maxHp + " HP, " + this.atk + " ATK)";
     }
 
     /**
@@ -56,8 +61,8 @@ public abstract class Servant {
      *
      * @return The servant's class stats
      */
-    public ServantClassStats getBaseClassStats() {
-        return baseClassStats;
+    public ServantClass getServantClass() {
+        return servantClass;
     }
 
     /**
