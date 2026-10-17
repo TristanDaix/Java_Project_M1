@@ -1,5 +1,6 @@
 package game.fate.services;
 
+import game.fate.exceptions.NotEnoughServantsException;
 import game.fate.models.Servant;
 
 import java.util.List;
@@ -126,10 +127,12 @@ public class ConsoleManager {
      * @param servants The servant list
      * @return The selected servant
      */
-    public Servant showSelectServantMenu(List<Servant> servants) {
+    public Servant showSelectServantMenu(List<Servant> servants) throws NotEnoughServantsException {
         printHeader("SERVANT SELECTION MENU");
 
-        for (int i = 0; i < servants.size(); i++) { // TODO exception if 0
+        if (servants.isEmpty()) throw new NotEnoughServantsException("Error: Not enough servant to choose from");
+
+        for (int i = 0; i < servants.size(); i++) {
             printOption(i + 1, servants.get(i).toString());
         }
 

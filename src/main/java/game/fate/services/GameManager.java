@@ -35,8 +35,14 @@ public class GameManager {
      */
     public void start() {
         List<Servant> servants = CsvReader.loadServants("src/main/resources/servants.csv");
+        Servant playerServant;
 
-        Servant playerServant = this.console.showSelectServantMenu(servants);
+        try {
+            playerServant = this.console.showSelectServantMenu(servants);
+        } catch (NotEnoughServantsException e) {
+            System.err.println(e.getMessage());
+            return;
+        }
 
         console.printSystemDialogue("Generating the other 6 servant for the Holy Grail War...");
         List<Servant> enemyRoster;
@@ -112,7 +118,7 @@ public class GameManager {
 
             int choice = this.console.showCombatMenu();
             if (choice == 1) {
-                this.console.printActionDialogue(playerServant.getName() + " attack " + enemyServant.getName() + " !");
+                this.console.printActionDialogue(playerServant.getName() + " attack " + enemyServant.getName() + " !"); // TODO: display damage
                 playerServant.performBasicAttack(enemyServant);
             }
             if (choice == 2) {
