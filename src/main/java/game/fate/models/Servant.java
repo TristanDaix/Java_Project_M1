@@ -12,6 +12,9 @@ public abstract class Servant {
     private int atk;
     private int level;
     private double exp;
+    private double criticalMultiplier; // Multiplicator, multiply damage by this value and by his class criticalMultiplier if it's a critical hit (so be aware that it will be multiplied 2 times)
+    private double criticalRate;  // Percentage (between 0 & 1), addition this value to his class criticalRate to know the chance it will be a critical hit
+    private boolean lastAttackWasCritical;
 
 
     /**
@@ -23,7 +26,7 @@ public abstract class Servant {
      * @param maxHp Servant's max hp
      * @param atk Servant's atk
      */
-    public Servant(int id, String name, ServantClass servantClass, int maxHp, int atk) {
+    public Servant(int id, String name, ServantClass servantClass, int maxHp, int atk, double criticalMultiplier, double criticalRate) {
         this.id = id;
         this.name = name;
         this.servantClass = servantClass;
@@ -32,6 +35,9 @@ public abstract class Servant {
         this.atk = atk;
         this.level = 1;
         this.exp = 0.0;
+        this.criticalMultiplier = criticalMultiplier;
+        this.criticalRate = criticalRate;
+        this.lastAttackWasCritical = false;
     }
 
     @Override
@@ -106,6 +112,33 @@ public abstract class Servant {
     }
 
     /**
+     * Get the servant's critical multiplier
+     *
+     * @return The critical multiplier
+     */
+    public double getCriticalMultiplier() {
+        return criticalMultiplier;
+    }
+
+    /**
+     * Get the servant's critical rate
+     *
+     * @return The critical rate
+     */
+    public double getCriticalRate() {
+        return criticalRate;
+    }
+
+    /**
+     * Notify if the last attack was critical
+     *
+     * @return True if it was, false if not
+     */
+    public boolean wasLastAttackCritical() {
+        return lastAttackWasCritical;
+    }
+
+    /**
      * Check if the servant is alive
      *
      * @return if the servant is alive
@@ -137,19 +170,32 @@ public abstract class Servant {
     }
 
     /**
-     * Deal damage to a target
+     * Deal damage to a target and return the damage deal
      *
      * @param target The target to attack
+     * @return The damage deal
      */
-    public void performBasicAttack(Servant target) {
-        target.takeDamage(this.atk); // TODO: apply mult, crit, ...
+    public int performBasicAttack(Servant target) {
+        double totalCritRate = Math.min(1.0, this.criticalRate + this.servantClass.getCriticalRate());
+        double totalCritMultiplier = this.criticalMultiplier * this.servantClass.getCriticalMultiplier();
+
+        int damage = (int) (this.atk * servantClass.getAttackMultiplier());
+        if (Math.random() < totalCritRate) {
+            damage = (int) (damage * totalCritMultiplier);
+            this.lastAttackWasCritical = true;
+        } else this.lastAttackWasCritical = false;
+
+        target.takeDamage(damage);
+        return damage;
     }
 
     /**
      * Gain a level and increase stat accordingly
      */
     public void levelUp() {
-        this.level++; // TODO: upgrade stat
+        this.level++;
+        this.atk = (int) (this.atk * 1.2);
+        this.maxHp = (int)(this.maxHp * 1.2);
     }
 
     /**
@@ -161,7 +207,7 @@ public abstract class Servant {
         if (exp < 0) return;
         this.exp += exp;
 
-        while (this.exp > 100) {
+        while (this.exp >= 100) {
             this.exp -= 100;
             levelUp();
         }

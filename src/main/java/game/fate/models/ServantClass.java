@@ -4,25 +4,25 @@ package game.fate.models;
  * Enumeration to store different constant for each servant class
  */
 public enum ServantClass { // TODO : load value from csv
-    SABER(1, 1.0, 1.0, 1.0),
-    ARCHER(2, 1.0, 1.0, 1.0),
-    LANCER(3, 1.0, 1.0, 1.0),
-    RIDER(4, 1.0, 1.0, 1.0),
-    CASTER(5, 1.0, 1.0, 1.0),
-    ASSASSIN(6, 1.0, 1.0, 1.0),
-    BERSERKER(7, 1.0, 1.0, 1.0),
-    RULER(8, 1.0, 1.0, 1.0),
-    AVENGER(9, 1.0, 1.0, 1.0),
-    MOONCANCER(10, 1.0, 1.0, 1.0),
-    ALTEREGO(11, 1.0, 1.0, 1.0),
-    FOREIGNER(12, 1.0, 1.0, 1.0),
-    PRETENDER(13, 1.0, 1.0, 1.0),
-    SHIELDER(14, 1.0, 1.0, 1.0);
+    SABER(1, 1.0, 1.5, 0.1),
+    ARCHER(2, 1.0, 1.5, 0.1),
+    LANCER(3, 1.0, 1.5, 0.1),
+    RIDER(4, 1.0, 1.5, 0.1),
+    CASTER(5, 1.0, 1.5, 0.1),
+    ASSASSIN(6, 1.0, 1.5, 0.1),
+    BERSERKER(7, 1.0, 1.5, 0.1),
+    RULER(8, 1.0, 1.5, 0.1),
+    AVENGER(9, 1.0, 1.5, 0.1),
+    MOONCANCER(10, 1.0, 1.5, 0.1),
+    ALTEREGO(11, 1.0, 1.5, 0.1),
+    FOREIGNER(12, 1.0, 1.5, 0.1),
+    PRETENDER(13, 1.0, 1.5, 0.1),
+    SHIELDER(14, 1.0, 1.5, 0.1);
 
-    private final int sortOrder;
-    private final double attackMultiplier;
-    private final double criticalMultiplier;
-    private final double criticalRate;
+    private final int sortOrder; // To order the presented servant list based on class
+    private final double attackMultiplier; // Multiplicator, multiply the servant attack by this value
+    private final double criticalMultiplier; // Multiplicator, multiply damage by this value and the servant own criticalMultiplier if it's a critical hit (so be aware that it will be multiplied 2 times)
+    private final double criticalRate; // Percentage (between 0 & 1), addition this value to the servant own criticalRate to know the chance it will be a critical hit
 
     /**
      * Construct a new ServantClass

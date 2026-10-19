@@ -57,9 +57,10 @@ public class GameManager {
         enemyRoster.forEach(System.out::println);
 
         for (Servant enemyServant : enemyRoster) {
-            startFight(playerServant, enemyServant); // TODO: stop if lost
+            startFight(playerServant, enemyServant);
+            if (!playerServant.isAlive()) break;
+            else playerServant.heal(playerServant.getMaxHp());
         }
-
 
     }
 
@@ -83,13 +84,11 @@ public class GameManager {
         Set<ServantClass> selectedClasses = new HashSet<>(); // to store unique servantClass
 
         for (Servant servant : availableServants) {
-            System.out.println(servant.getServantClass() + " - " + !selectedClasses.contains(servant.getServantClass()));
             if (!selectedClasses.contains(servant.getServantClass())) {
                 enemyRoster.add(servant);
                 selectedClasses.add(servant.getServantClass());
             }
 
-            System.out.println(enemyRoster.size());
             if (enemyRoster.size() == 6) {
                 break;
             }
@@ -118,8 +117,10 @@ public class GameManager {
 
             int choice = this.console.showCombatMenu();
             if (choice == 1) {
-                this.console.printActionDialogue(playerServant.getName() + " attack " + enemyServant.getName() + " !"); // TODO: display damage
-                playerServant.performBasicAttack(enemyServant);
+                int damage = playerServant.performBasicAttack(enemyServant);
+                if (playerServant.wasLastAttackCritical()) this.console.printActionDialogue("CRITICAL HIT !");
+                this.console.printActionDialogue(playerServant.getName() + " attack " + enemyServant.getName() + " and inflict " + damage + " damage !");
+
             }
             if (choice == 2) {
                 // TODO np
@@ -128,16 +129,20 @@ public class GameManager {
 
             if (!enemyServant.isAlive()) {
                 this.console.printActionDialogue(enemyServant.getName() + " is defeated !");
+                playerServant.gainExp(100); // TODO: depend on level / servant
+                // TODO: display level up message
                 break;
             }
 
             this.console.printSystemDialogue("Enemy's turn.");
 
-            this.console.printActionDialogue(enemyServant.getName() + " attack " + playerServant.getName() + " !");
-            enemyServant.performBasicAttack(playerServant);
+            int damage = enemyServant.performBasicAttack(playerServant);
+            if (enemyServant.wasLastAttackCritical()) this.console.printActionDialogue("CRITICAL HIT !");
+            this.console.printActionDialogue(enemyServant.getName() + " attack " + playerServant.getName() + " and inflict " + damage + " damage !");
+
 
             if (!playerServant.isAlive()) {
-                this.console.printSystemDialogue(playerServant.getName() + " was defeated !");
+                this.console.printActionDialogue(playerServant.getName() + " was defeated !");
             }
 
             turn++;

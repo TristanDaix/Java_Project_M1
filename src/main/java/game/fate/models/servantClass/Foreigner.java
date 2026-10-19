@@ -5,7 +5,7 @@ import game.fate.models.ServantClass;
 
 public class Foreigner extends Servant {
 
-    public Foreigner(int id, String name, ServantClass baseClassStats, int maxHp, int atk) {
-        super(id, name, baseClassStats, maxHp, atk);
+    public Foreigner(int id, String name, ServantClass baseClassStats, int maxHp, int atk, double criticalMultiplier, double criticalRate) {
+        super(id, name, baseClassStats, maxHp, atk, criticalMultiplier, criticalRate);
     }
 }
