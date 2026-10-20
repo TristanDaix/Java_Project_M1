@@ -1,8 +1,15 @@
 package game.fate.services;
 
 import game.fate.exceptions.NotEnoughServantsException;
-import game.fate.models.Servant;
-import game.fate.models.ServantClass;
+import game.fate.models.MasterServantPair;
+import game.fate.models.actions.Action;
+import game.fate.models.dto.ActionResult;
+import game.fate.models.dto.LevelUpResult;
+import game.fate.models.master.AIMaster;
+import game.fate.models.master.HumanMaster;
+import game.fate.models.master.Master;
+import game.fate.models.servantClass.Servant;
+import game.fate.models.servantClass.ServantClass;
 import game.fate.utils.CsvReader;
 
 import java.util.*;
@@ -44,6 +51,9 @@ public class GameManager {
             return;
         }
 
+        Master playerMaster = new HumanMaster(this.console);
+        MasterServantPair playerPair = new MasterServantPair(playerMaster, playerServant);
+
         console.printSystemDialogue("Generating the other 6 servant for the Holy Grail War...");
         List<Servant> enemyRoster;
         try {
@@ -53,13 +63,22 @@ public class GameManager {
             return;
         }
 
-        console.printSystemDialogue("The 6 enemy servants are ");
+        console.printSystemDialogue("The 6 enemy servants are: ");
         enemyRoster.forEach(System.out::println);
 
         for (Servant enemyServant : enemyRoster) {
-            startFight(playerServant, enemyServant);
-            if (!playerServant.isAlive()) break;
-            else playerServant.heal(playerServant.getMaxHp());
+            Master enemyMaster = new AIMaster(); // TODO move in generateEnemyRoster
+            MasterServantPair enemyPair = new MasterServantPair(enemyMaster, enemyServant);
+
+            startFight(playerPair, enemyPair);
+
+            if (!playerServant.isAlive()) {
+                console.printSystemDialogue("Game Over. Your servant fell in battle.");
+                break;
+            } else {
+                playerServant.heal(playerServant.getMaxHp());
+                console.printActionDialogue(playerServant.getName() + " has been fully healed for the next battle.");
+            }
         }
 
     }
@@ -95,59 +114,42 @@ public class GameManager {
         }
 
         if (enemyRoster.size() < 6) {
-            throw new NotEnoughServantsException("Error : Not enough different servant class in the list of servants to launch the game");
+            throw new NotEnoughServantsException("Error : Not enough distinct servant class in the list of servants to launch the game");
         }
 
         return enemyRoster;
     }
 
-    /**
-     * Start the fight with two servants
-     *
-     * @param playerServant The player servant
-     * @param enemyServant  The enemy servant
-     */
-    public void startFight(Servant playerServant, Servant enemyServant) {
-        int turn = 1;
+    public void startFight(MasterServantPair playerPair, MasterServantPair enemyPair) {
+        Servant playerServant = playerPair.getServant();
+        Servant enemyServant = enemyPair.getServant();
 
+        int turn = 1;
         this.console.printHeader("BATTLE START: \n" + playerServant.getName() + " VS " + enemyServant.getName());
 
         while (playerServant.isAlive() && enemyServant.isAlive()) {
             this.console.printCombatStatus(turn, playerServant, enemyServant);
 
-            int choice = this.console.showCombatMenu();
-            if (choice == 1) {
-                int damage = playerServant.performBasicAttack(enemyServant);
-                if (playerServant.wasLastAttackCritical()) this.console.printActionDialogue("CRITICAL HIT !");
-                this.console.printActionDialogue(playerServant.getName() + " attack " + enemyServant.getName() + " and inflict " + damage + " damage !");
-
-            }
-            if (choice == 2) {
-                // TODO np
-                this.console.printActionDialogue(playerServant.getName() + " prepares Noble Phantasm ! (Not implemented yet)");
-            }
+            // Player Turn
+            Action playerAction = playerPair.issueCommand(); // TODO also wrap execute ?
+            ActionResult playerResult = playerAction.execute(playerServant, enemyServant);
+            this.console.printActionResult(playerResult);
 
             if (!enemyServant.isAlive()) {
-                this.console.printActionDialogue(enemyServant.getName() + " is defeated !");
-                playerServant.gainExp(100); // TODO: depend on level / servant
-                // TODO: display level up message
+                LevelUpResult levelResult = playerServant.gainExp(100); // TODO: depend on level / servant
+                this.console.printSystemDialogue(playerServant.getName() + " gained 100 EXP!");
+                this.console.printLevelUp(levelResult);
                 break;
             }
 
+            // Enemy Turn
             this.console.printSystemDialogue("Enemy's turn.");
-
-            int damage = enemyServant.performBasicAttack(playerServant);
-            if (enemyServant.wasLastAttackCritical()) this.console.printActionDialogue("CRITICAL HIT !");
-            this.console.printActionDialogue(enemyServant.getName() + " attack " + playerServant.getName() + " and inflict " + damage + " damage !");
-
-
-            if (!playerServant.isAlive()) {
-                this.console.printActionDialogue(playerServant.getName() + " was defeated !");
-            }
+            Action enemyAction = enemyPair.issueCommand();
+            ActionResult enemyResult = enemyAction.execute(enemyServant, playerServant);
+            this.console.printActionResult(enemyResult);
 
             turn++;
         }
-
         this.console.printHeader("BATTLE ENDED");
     }
 }

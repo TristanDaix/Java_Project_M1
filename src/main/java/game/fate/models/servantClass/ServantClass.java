@@ -1,4 +1,4 @@
-package game.fate.models;
+package game.fate.models.servantClass;
 
 /**
  * Enumeration to store different constant for each servant class

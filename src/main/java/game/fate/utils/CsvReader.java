@@ -1,9 +1,9 @@
 package game.fate.utils;
 
 import game.fate.exceptions.UnknowServantClassException;
-import game.fate.models.Servant;
-import game.fate.models.ServantClass;
-import game.fate.models.servantClass.*;
+import game.fate.models.servantClass.Servant;
+import game.fate.models.servantClass.ServantClass;
+import game.fate.services.factories.ServantFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +36,7 @@ public class CsvReader {
 
                 if (line.isBlank()) continue;
 
-                servants.add(getServant(line));
+                servants.add(parseServantFromLine(line));
             }
         } catch (IOException e) {
             System.err.println("Error: Unable to read file " + e.getMessage());
@@ -62,40 +62,25 @@ public class CsvReader {
      * @throws ArrayIndexOutOfBoundsException Error in number of arguments
      * @throws UnknowServantClassException    Error in servant class
      */
-    private static Servant getServant(String line) throws NumberFormatException, ArrayIndexOutOfBoundsException, UnknowServantClassException {
+    private static Servant parseServantFromLine(String line) throws NumberFormatException, ArrayIndexOutOfBoundsException, UnknowServantClassException {
         String[] fields = line.split(",");
 
         int id = Integer.parseInt(fields[0].trim());
         String name = fields[1].trim();
-        String servantClass = fields[2].trim();
+        String className = fields[2].trim();
         int maxHp = Integer.parseInt(fields[3].trim());
         int atk = Integer.parseInt(fields[4].trim());
         double criticalMultiplier = Double.parseDouble(fields[5].trim());
         double criticalRate = Double.parseDouble(fields[6].trim());
 
-        return switch (servantClass.toLowerCase()) {
-            case "saber" -> new Saber(id, name, ServantClass.SABER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "archer" -> new Archer(id, name, ServantClass.ARCHER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "lancer" -> new Lancer(id, name, ServantClass.LANCER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "rider" -> new Rider(id, name, ServantClass.RIDER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "caster" -> new Caster(id, name, ServantClass.CASTER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "assassin" ->
-                    new Assassin(id, name, ServantClass.ASSASSIN, maxHp, atk, criticalMultiplier, criticalRate);
-            case "berserker" ->
-                    new Berserker(id, name, ServantClass.BERSERKER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "ruler" -> new Ruler(id, name, ServantClass.RULER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "avenger" -> new Avenger(id, name, ServantClass.AVENGER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "mooncancer" ->
-                    new MoonCancer(id, name, ServantClass.MOONCANCER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "alterego" ->
-                    new AlterEgo(id, name, ServantClass.ALTEREGO, maxHp, atk, criticalMultiplier, criticalRate);
-            case "foreigner" ->
-                    new Foreigner(id, name, ServantClass.FOREIGNER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "pretender" ->
-                    new Pretender(id, name, ServantClass.PRETENDER, maxHp, atk, criticalMultiplier, criticalRate);
-            case "shielder" ->
-                    new Shielder(id, name, ServantClass.SHIELDER, maxHp, atk, criticalMultiplier, criticalRate);
-            default -> throw new UnknowServantClassException(servantClass);
-        };
+        ServantClass servantClass;
+        try {
+            servantClass = ServantClass.valueOf(className.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new UnknowServantClassException(className);
+        }
+
+        // Delegate object construction to ServantFactory
+        return ServantFactory.createServant(id, name, servantClass, maxHp, atk, criticalMultiplier, criticalRate);
     }
 }

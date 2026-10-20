@@ -1,8 +1,5 @@
 package game.fate.models.servantClass;
 
-import game.fate.models.Servant;
-import game.fate.models.ServantClass;
-
 public class Saber extends Servant {
 
 

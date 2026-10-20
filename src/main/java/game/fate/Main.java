@@ -32,7 +32,8 @@ public class Main {
     }
 }
 
-// TODO: separe action de servant
+// TODO: replace every enemy occurence by opponent
+// TODO: action by command
 // TODO: COMMENTS
 // TODO: specific class behavior
 // TODO: class advantage

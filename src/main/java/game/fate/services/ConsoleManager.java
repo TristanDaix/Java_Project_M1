@@ -1,7 +1,10 @@
 package game.fate.services;
 
 import game.fate.exceptions.NotEnoughServantsException;
-import game.fate.models.Servant;
+import game.fate.models.actions.Action;
+import game.fate.models.dto.ActionResult;
+import game.fate.models.dto.LevelUpResult;
+import game.fate.models.servantClass.Servant;
 
 import java.util.List;
 import java.util.Scanner;
@@ -156,14 +159,22 @@ public class ConsoleManager {
     /**
      * Display the action possible during a fight
      *
+     * @param availableActions List of action available to use
      * @return The player input
      */
-    public int showCombatMenu() {
-        printSystemDialogue("Your turn.");
-        printOption(1, "Attack");
-        printOption(2, "NP");
+    public int showCombatMenu(List<Action> availableActions) {
+        printSystemDialogue("Your turn. Select an action:");
+        for (int i = 0; i < availableActions.size(); i++) {
+            printOption(i + 1, availableActions.get(i).getName());
+        }
 
-        return readIntInput();
+        while (true) {
+            int choice = readIntInput();
+            if (choice >= 1 && choice <= availableActions.size()) {
+                return choice;
+            }
+            printSystemDialogue("Invalid choice. Please select a valid action.");
+        }
     }
 
     /**
@@ -188,5 +199,32 @@ public class ConsoleManager {
         System.out.println(GREEN + enemy.getHp() + " HP " + RESET + " | " + RED + enemy.getAtk() + " ATK" + RESET);
 
         System.out.print("\n");
+    }
+
+    /**
+     * Displays the outcome of an Action
+     */
+    public void printActionResult(ActionResult result) {
+        if (result.isCritical()) {
+            printActionDialogue("CRITICAL HIT !");
+        }
+
+        String effectType = result.healthChange() < 0 ? "damage" : "healing";
+        int amount = Math.abs(result.healthChange());
+
+        printActionDialogue(result.sourceName() + " used " + result.actionName() +
+                " on " + result.targetName() + " causing " + amount + " " + effectType + " !");
+
+        if (result.targetDefeated()) {
+            printActionDialogue(result.targetName() + " has been defeated !");
+        }
+    }
+
+    public void printLevelUp(LevelUpResult result) {
+        if (!result.leveledUp()) return;
+
+        printActionDialogue("LEVEL UP! Reached Level " + result.newLevel() + "!");
+        printActionDialogue("ATK: " + result.oldAtk() + " -> " + result.newAtk());
+        printActionDialogue("HP: " + result.oldHp() + " -> " + result.newHp());
     }
 }

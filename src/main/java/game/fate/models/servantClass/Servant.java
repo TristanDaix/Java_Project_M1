@@ -1,4 +1,10 @@
-package game.fate.models;
+package game.fate.models.servantClass;
+
+import game.fate.models.actions.Action;
+import game.fate.models.dto.LevelUpResult;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract class for servant
@@ -14,8 +20,8 @@ public abstract class Servant {
     private double exp;
     private double criticalMultiplier; // Multiplicator, multiply damage by this value and by his class criticalMultiplier if it's a critical hit (so be aware that it will be multiplied 2 times)
     private double criticalRate;  // Percentage (between 0 & 1), addition this value to his class criticalRate to know the chance it will be a critical hit
-    private boolean lastAttackWasCritical;
 
+    private final List<Action> availableActions;
 
     /**
      * Construct a new servant
@@ -37,7 +43,7 @@ public abstract class Servant {
         this.exp = 0.0;
         this.criticalMultiplier = criticalMultiplier;
         this.criticalRate = criticalRate;
-        this.lastAttackWasCritical = false;
+        this.availableActions = new ArrayList<>();
     }
 
     @Override
@@ -129,13 +135,12 @@ public abstract class Servant {
         return criticalRate;
     }
 
-    /**
-     * Notify if the last attack was critical
-     *
-     * @return True if it was, false if not
-     */
-    public boolean wasLastAttackCritical() {
-        return lastAttackWasCritical;
+    public void addAction(Action action) {
+        this.availableActions.add(action);
+    }
+
+    public List<Action> getAvailableActions() {
+        return availableActions;
     }
 
     /**
@@ -170,26 +175,6 @@ public abstract class Servant {
     }
 
     /**
-     * Deal damage to a target and return the damage deal
-     *
-     * @param target The target to attack
-     * @return The damage deal
-     */
-    public int performBasicAttack(Servant target) {
-        double totalCritRate = Math.min(1.0, this.criticalRate + this.servantClass.getCriticalRate());
-        double totalCritMultiplier = this.criticalMultiplier * this.servantClass.getCriticalMultiplier();
-
-        int damage = (int) (this.atk * servantClass.getAttackMultiplier());
-        if (Math.random() < totalCritRate) {
-            damage = (int) (damage * totalCritMultiplier);
-            this.lastAttackWasCritical = true;
-        } else this.lastAttackWasCritical = false;
-
-        target.takeDamage(damage);
-        return damage;
-    }
-
-    /**
      * Gain a level and increase stat accordingly
      */
     public void levelUp() {
@@ -203,13 +188,20 @@ public abstract class Servant {
      *
      * @param exp The amount of exp gained
      */
-    public void gainExp(double exp) {
-        if (exp < 0) return;
-        this.exp += exp;
+    public LevelUpResult gainExp(double exp) {
+        if (exp < 0) return new LevelUpResult(false, level, level, atk, atk, maxHp, maxHp);
 
+        int startLevel = this.level;
+        int startAtk = this.atk;
+        int startHp = this.maxHp;
+
+        this.exp += exp;
         while (this.exp >= 100) {
             this.exp -= 100;
             levelUp();
         }
+
+        boolean leveledUp = this.level > startLevel;
+        return new LevelUpResult(leveledUp, startLevel, this.level, startAtk, this.atk, startHp, this.maxHp);
     }
 }
