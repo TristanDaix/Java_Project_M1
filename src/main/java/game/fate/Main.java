@@ -3,8 +3,18 @@ package game.fate;
 import game.fate.services.ConsoleManager;
 import game.fate.services.GameManager;
 
+/**
+ * The main entry point for the ISEN Holy Grail War application.
+ * This class initializes the game components and manages the main menu execution loop.
+ */
 public class Main {
 
+    /**
+     * Manage the game loop, displaying the main menu and processing the player's
+     * top-level choices to either start or terminate the application.
+     *
+     * @param args Command-line arguments passed during application startup.
+     */
     public static void main(String[] args) {
         GameManager game = new GameManager();
         ConsoleManager console = game.getConsole();

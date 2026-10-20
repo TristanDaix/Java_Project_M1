@@ -14,15 +14,17 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Class responsible for reading the different csv file for the application data
+ * Utility responsible for deserializing external game data files into active Java objects.
  */
 public class CsvReader {
 
     /**
-     * Read a csv file to load a list of servant
+     * Reads a formatted CSV file and constructs a master list of Servant entities.
+     * Silently catches structural exceptions to prevent crashes on malformed data, and returns
+     * the successfully parsed list sorted primarily by class order and secondarily by name.
      *
-     * @param filePath The path to the csv file
-     * @return The list of servant loaded
+     * @param filePath The local system path resolving to the target CSV document.
+     * @return An ordered list of successfully instantiated Servants.
      */
     public static List<Servant> loadServants(String filePath) {
         List<Servant> servants = new ArrayList<>();
@@ -54,13 +56,14 @@ public class CsvReader {
     }
 
     /**
-     * Create the servant from a line of csv
+     * Parses a single row of comma-separated text into discrete parameters and delegates
+     * instantiation to the ServantFactory.
      *
-     * @param line The servant's data line
-     * @return The servant object
-     * @throws NumberFormatException          Error in number format
-     * @throws ArrayIndexOutOfBoundsException Error in number of arguments
-     * @throws UnknowServantClassException    Error in servant class
+     * @param line A single plaintext row representing one Servant's data.
+     * @return A constructed Servant object.
+     * @throws NumberFormatException          If numerical columns contain invalid text.
+     * @throws ArrayIndexOutOfBoundsException If the line lacks the expected number of column fields.
+     * @throws UnknowServantClassException    If the designated class column fails to match a known ServantClass enumeration.
      */
     private static Servant parseServantFromLine(String line) throws NumberFormatException, ArrayIndexOutOfBoundsException, UnknowServantClassException {
         String[] fields = line.split(",");

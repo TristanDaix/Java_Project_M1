@@ -7,30 +7,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Abstract class for servant
+ * Abstract foundation representing a summoned Heroic Spirit.
+ * Manages core combat attributes, health lifecycle, progression, and available actions.
  */
 public abstract class Servant {
-    private final int id;
-    private final String name;
-    private final ServantClass servantClass;
-    private int hp;
-    private int maxHp;
-    private int atk;
-    private int level;
-    private double exp;
-    private double criticalMultiplier; // Multiplicator, multiply damage by this value and by his class criticalMultiplier if it's a critical hit (so be aware that it will be multiplied 2 times)
-    private double criticalRate;  // Percentage (between 0 & 1), addition this value to his class criticalRate to know the chance it will be a critical hit
+    private final int id; // The Servant's unique identifier
+    private final String name; // Lore identity
+    private final ServantClass servantClass; // Class modifiers
+    private int hp; // Current hp
+    private int maxHp; // Maximum hp amount possible
+    private int atk; // combat attack value
+    private int level; // Level metric
+    private double exp; // Experience metric
+    private final double criticalMultiplier; // Multiplicator, multiply damage by this value and by his class criticalMultiplier if it's a critical hit (so be aware that it will be multiplied 2 times)
+    private final double criticalRate;  // Percentage (between 0 & 1), addition this value to his class criticalRate to know the chance it will be a critical hit
 
-    private final List<Action> availableActions;
+    private final List<Action> availableActions; // Dynamic list of usable combat actions
 
     /**
-     * Construct a new servant
+     * Initializes a base Servant entity with initial stats. Sets default level to 1 and experience to 0.0.
      *
-     * @param id Servant's id
-     * @param name Servant's name
-     * @param servantClass Servant's class stats
-     * @param maxHp Servant's max hp
-     * @param atk Servant's atk
+     * @param id                 The unique registry identifier for the Servant.
+     * @param name               The identity of the Servant.
+     * @param servantClass       The foundational class modifiers.
+     * @param maxHp              The initial maximum health.
+     * @param atk                The base attack power.
+     * @param criticalMultiplier The personal damage multiplier upon landing a critical hit (stacks with class multiplier).
+     * @param criticalRate       The personal chance addition to land a critical hit.
      */
     public Servant(int id, String name, ServantClass servantClass, int maxHp, int atk, double criticalMultiplier, double criticalRate) {
         this.id = id;
@@ -46,97 +49,57 @@ public abstract class Servant {
         this.availableActions = new ArrayList<>();
     }
 
+    /**
+     * Returns a formatted summary string containing the Servant's class, name, maximum health, and attack power.
+     *
+     * @return Formatted character profile string.
+     */
     @Override
     public String toString() {
         return servantClass + " " + this.name + " (" + this.maxHp + " HP, " + this.atk + " ATK)";
     }
 
     /**
-     * Get the servant's id
-     *
-     * @return The servant's id
+     * Standard accessor methods returning the current value of the respective Servant attributes.
      */
     public int getId() {
         return id;
     }
 
-    /**
-     * Get the servant's name
-     * @return The servant's name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Get the servant's class stats
-     *
-     * @return The servant's class stats
-     */
     public ServantClass getServantClass() {
         return servantClass;
     }
 
-    /**
-     * Get the servant's hp
-     * @return The servant's hp
-     */
     public int getHp() {
         return hp;
     }
 
-    /**
-     * Get the servant's max hp
-     * @return The servant's max hp
-     */
     public int getMaxHp() {
         return maxHp;
     }
 
-    /**
-     * Get the servant's atk
-     * @return The servant's atk
-     */
     public int getAtk() {
         return atk;
     }
 
-    /**
-     * Get the servant's level
-     * @return The servant's level
-     */
     public int getLevel() {
         return level;
     }
 
-    /**
-     * Get the servant's exp
-     * @return The servant's exp
-     */
     public double getExp() {
         return exp;
     }
 
-    /**
-     * Get the servant's critical multiplier
-     *
-     * @return The critical multiplier
-     */
     public double getCriticalMultiplier() {
         return criticalMultiplier;
     }
 
-    /**
-     * Get the servant's critical rate
-     *
-     * @return The critical rate
-     */
     public double getCriticalRate() {
         return criticalRate;
-    }
-
-    public void addAction(Action action) {
-        this.availableActions.add(action);
     }
 
     public List<Action> getAvailableActions() {
@@ -144,18 +107,28 @@ public abstract class Servant {
     }
 
     /**
-     * Check if the servant is alive
+     * Binds a new executable combat action to this Servant's arsenal.
      *
-     * @return if the servant is alive
+     * @param action The Action to append to the available actions list.
+     */
+    public void addAction(Action action) {
+        this.availableActions.add(action);
+    }
+
+    /**
+     * Determines if the Servant is currently capable of battling.
+     *
+     * @return True if current HP is greater than 0, false otherwise.
      */
     public boolean isAlive() {
         return hp > 0;
     }
 
     /**
-     * Reduce the hp based on the damage taken
+     * Subtracts the specified amount from the Servant's current health.
+     * Enforces a floor of 0 HP to prevent negative health states.
      *
-     * @param amount The amount of damage
+     * @param amount The numerical damage to be applied. Ignores amounts <= 0.
      */
     public void takeDamage(int amount) {
         if (amount <= 0) return;
@@ -164,9 +137,9 @@ public abstract class Servant {
     }
 
     /**
-     * Increase the hp based on the amount of heal received
+     * Restores health to the Servant up to the strict limit of their maximum HP capacity.
      *
-     * @param amount The amount of heal
+     * @param amount The numerical health to restore. Ignores amounts <= 0.
      */
     public void heal(int amount) {
         if (amount <= 0) return;
@@ -175,18 +148,20 @@ public abstract class Servant {
     }
 
     /**
-     * Gain a level and increase stat accordingly
+     * Increments the Servant's level and scales base attack and maximum health by 20%.
      */
     public void levelUp() {
         this.level++;
         this.atk = (int) (this.atk * 1.2);
-        this.maxHp = (int)(this.maxHp * 1.2);
+        this.maxHp = (int) (this.maxHp * 1.2);
     }
 
     /**
-     * Increase the amount of exp possessed (+1 level if >100)
+     * Adds experience to the Servant. Evaluates level-up thresholds (every 100 EXP)
+     * and triggers stat scaling automatically if thresholds are crossed.
      *
-     * @param exp The amount of exp gained
+     * @param exp The amount of experience gained.
+     * @return A LevelUpResult detailing the statistical changes during the transaction.
      */
     public LevelUpResult gainExp(double exp) {
         if (exp < 0) return new LevelUpResult(false, level, level, atk, atk, maxHp, maxHp);

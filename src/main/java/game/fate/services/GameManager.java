@@ -15,30 +15,31 @@ import game.fate.utils.CsvReader;
 import java.util.*;
 
 /**
- * Class to manage the game
+ * The core orchestration service. Manages the overarching game lifecycle, opponent generation,
+ * and the step-by-step resolution of the battle phase.
  */
 public class GameManager {
-    private final ConsoleManager console;
-
+    private final ConsoleManager console; // The console manager for UI operations.
 
     /**
-     * Construct a new GameManager
+     * Initializes the underlying game state and its UI dependencies.
      */
     public GameManager() {
         this.console = new ConsoleManager();
     }
 
     /**
-     * Get the console manager
+     * Retrieves the UI manager currently serving the game instance.
      *
-     * @return The console manager
+     * @return The active ConsoleManager.
      */
     public ConsoleManager getConsole() {
         return console;
     }
 
     /**
-     * Start the game
+     * Executes the primary game pipeline: loading servant data, securing the player's choice,
+     * generating an enemy roster, and looping sequentially through combat encounters.
      */
     public void start() {
         List<Servant> servants = CsvReader.loadServants("src/main/resources/servants.csv");
@@ -55,7 +56,7 @@ public class GameManager {
         MasterServantPair playerPair = new MasterServantPair(playerMaster, playerServant);
 
         console.printSystemDialogue("Generating the other 6 servant for the Holy Grail War...");
-        List<Servant> enemyRoster;
+        List<MasterServantPair> enemyRoster;
         try {
             enemyRoster = generateEnemyRoster(playerServant, servants);
         } catch (NotEnoughServantsException e) {
@@ -66,10 +67,7 @@ public class GameManager {
         console.printSystemDialogue("The 6 enemy servants are: ");
         enemyRoster.forEach(System.out::println);
 
-        for (Servant enemyServant : enemyRoster) {
-            Master enemyMaster = new AIMaster(); // TODO move in generateEnemyRoster
-            MasterServantPair enemyPair = new MasterServantPair(enemyMaster, enemyServant);
-
+        for (MasterServantPair enemyPair : enemyRoster) {
             startFight(playerPair, enemyPair);
 
             if (!playerServant.isAlive()) {
@@ -84,27 +82,27 @@ public class GameManager {
     }
 
     /**
-     * Select 6 random enemy servants with distinct classes,
-     * and different from the player's servant class.
+     * Compiles a randomized gauntlet of 6 unique enemy Master-Servant pairs.
+     * Enforces the rule that all enemies must be of distinct classes and differ from the player's chosen class.
      *
-     * @param playerServant The servant chosen by the player
-     * @param allServants   The full list of loaded servants
-     * @return A list of 6 distinct enemy servants
-     * @throws NotEnoughServantsException Error in the number of servant available
+     * @param playerServant The Servant designated to the player.
+     * @param allServants   The full dictionary of available Servants.
+     * @return A randomized list of exactly 6 unique enemy pairs.
+     * @throws NotEnoughServantsException If the dictionary lacks sufficient class diversity to satisfy generation constraints.
      */
-    private List<Servant> generateEnemyRoster(Servant playerServant, List<Servant> allServants) throws NotEnoughServantsException {
+    private List<MasterServantPair> generateEnemyRoster(Servant playerServant, List<Servant> allServants) throws NotEnoughServantsException {
         List<Servant> availableServants = new ArrayList<>(allServants.stream()
                 .filter(s -> !s.getServantClass().equals(playerServant.getServantClass()))
                 .toList());
 
         Collections.shuffle(availableServants);
 
-        List<Servant> enemyRoster = new ArrayList<>();
+        List<MasterServantPair> enemyRoster = new ArrayList<>();
         Set<ServantClass> selectedClasses = new HashSet<>(); // to store unique servantClass
 
         for (Servant servant : availableServants) {
             if (!selectedClasses.contains(servant.getServantClass())) {
-                enemyRoster.add(servant);
+                enemyRoster.add(new MasterServantPair(new AIMaster(), servant));
                 selectedClasses.add(servant.getServantClass());
             }
 
@@ -120,6 +118,13 @@ public class GameManager {
         return enemyRoster;
     }
 
+    /**
+     * Drives the execution loop of a localized battle between two Master-Servant pairs.
+     * Alternates turns, triggers commands, tracks health pools, and resolves victory/defeat conditions.
+     *
+     * @param playerPair The player-controlled combat unit.
+     * @param enemyPair  The AI-controlled opposition unit.
+     */
     public void startFight(MasterServantPair playerPair, MasterServantPair enemyPair) {
         Servant playerServant = playerPair.getServant();
         Servant enemyServant = enemyPair.getServant();

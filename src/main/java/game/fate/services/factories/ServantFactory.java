@@ -1,10 +1,26 @@
 package game.fate.services.factories;
 
-import game.fate.exceptions.UnknowServantClassException;
 import game.fate.models.actions.AttackAction;
 import game.fate.models.servantClass.*;
 
+/**
+ * Creational pattern implementation responsible for abstracting the instantiation of specific
+ * Servant subclasses and dynamically attaching default combat actions to them.
+ */
 public class ServantFactory {
+    /**
+     * Assembles and returns a specific, fully-equipped Servant derivative based on the provided class literal.
+     * Automatically binds universal actions (e.g., AttackAction) to the generated entity.
+     *
+     * @param id                 The unique registry identifier.
+     * @param name               The heroic identity.
+     * @param servantClass       The enumeration defining the class wrapper to instantiate.
+     * @param maxHp              The base max health.
+     * @param atk                The base attack value.
+     * @param criticalMultiplier Inherent critical damage multiplier.
+     * @param criticalRate       Inherent critical chance addition.
+     * @return A constructed and combat-ready Servant object.
+     */
     public static Servant createServant(int id, String name, ServantClass servantClass,
                                         int maxHp, int atk, double criticalMultiplier, double criticalRate) {
 

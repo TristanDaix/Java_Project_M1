@@ -1,7 +1,8 @@
 package game.fate.models.servantClass;
 
 /**
- * Enumeration to store different constant for each servant class
+ * Enumeration containing the foundational parameters, combat scaling multipliers, and ordering properties
+ * for the standard and extra Servant classes within the Fate universe.
  */
 public enum ServantClass { // TODO : load value from csv
     SABER(1, 1.0, 1.5, 0.1),
@@ -25,12 +26,12 @@ public enum ServantClass { // TODO : load value from csv
     private final double criticalRate; // Percentage (between 0 & 1), addition this value to the servant own criticalRate to know the chance it will be a critical hit
 
     /**
-     * Construct a new ServantClass
+     * Initializes a class constant with specific gameplay balancing multipliers.
      *
-     * @param sortOrder          Order to sort the servant by class
-     * @param attackMultiplier   Attack multiplier value
-     * @param criticalMultiplier Critical damage multiplier value
-     * @param criticalRate       Critical rate value
+     * @param sortOrder          The integer used to group and sort Servants by class.
+     * @param attackMultiplier   The scalar value modifying raw attack power.
+     * @param criticalMultiplier The scalar value modifying damage during a critical strike.
+     * @param criticalRate       The flat percentage addition to critical strike probability.
      */
     ServantClass(int sortOrder, double attackMultiplier, double criticalMultiplier, double criticalRate) {
         this.sortOrder = sortOrder;
@@ -40,37 +41,20 @@ public enum ServantClass { // TODO : load value from csv
     }
 
     /**
-     * Get the order to sort the servant by class
-     *
-     * @return Order to sort the servant by class
+     * Standard accessor methods returning the current value of the respective ServantClass modificator.
      */
     public double getSortOrder() {
         return sortOrder;
     }
 
-    /**
-     * Get attack multiplier value
-     *
-     * @return Attack multiplier value
-     */
     public double getAttackMultiplier() {
         return attackMultiplier;
     }
 
-    /**
-     * Get critical damage multiplier value
-     *
-     * @return Critical damage multiplier value
-     */
     public double getCriticalMultiplier() {
         return criticalMultiplier;
     }
 
-    /**
-     * Get critical rate value
-     *
-     * @return Critical rate value
-     */
     public double getCriticalRate() {
         return criticalRate;
     }

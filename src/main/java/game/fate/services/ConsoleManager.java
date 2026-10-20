@@ -10,24 +10,24 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Class to manage the UI of the game
+ * Dedicated presentation layer utility handling terminal-based UI rendering,
+ * stylized ANSI output formatting, and safe user input ingestion.
  */
 public class ConsoleManager {
-    private final Scanner scanner;
+    private final Scanner scanner; // Input stream reader
 
-    // Color ANSI
+    // Constant definitions for ANSI escape sequences to colorize text.
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
     public static final String BLUE = "\u001B[34m";
-    public static final String PURPLE = "\u001B[35m";
     public static final String CYAN = "\u001B[36m";
     public static final String BOLD = "\u001B[1m";
     public static final String ITALIC = "\u001B[3m";
 
     /**
-     * Construct a new ConsoleManager
+     * Initializes the UI manager and binds its scanner to standard system input.
      */
     public ConsoleManager() {
         this.scanner = new Scanner(System.in);
@@ -90,9 +90,10 @@ public class ConsoleManager {
     }
 
     /**
-     * Avoid crash if the player enter a string instead of an int
+     * Captures a safe integer from the user. Re-prompts continuously upon invalid string/character inputs
+     * to prevent application crashes.
      *
-     * @return The player input
+     * @return The validated integer input.
      */
     private int readIntInput() {
         System.out.print(GREEN + "> " + RESET);
@@ -107,9 +108,9 @@ public class ConsoleManager {
     }
 
     /**
-     * Display the main menu of the game
+     * Renders the primary application title screen and captures the user's intent to start or exit.
      *
-     * @return The player input
+     * @return The validated integer corresponding to the user's menu choice.
      */
     public int showMainMenu() {
         printHeader("ISEN HOLY GRAIL WAR - MAIN MENU");
@@ -125,10 +126,12 @@ public class ConsoleManager {
     }
 
     /**
-     * Display the menu to choose a servant
+     * Displays an interactive roster for the player to select their participating Servant for the Holy Grail War.
+     * Requires user confirmation to finalize the contract.
      *
-     * @param servants The servant list
-     * @return The selected servant
+     * @param servants The list of available Servants parsed from data sources.
+     * @return The confirmed Servant chosen by the player.
+     * @throws NotEnoughServantsException If the provided servant list is empty.
      */
     public Servant showSelectServantMenu(List<Servant> servants) throws NotEnoughServantsException {
         printHeader("SERVANT SELECTION MENU");
@@ -157,10 +160,10 @@ public class ConsoleManager {
     }
 
     /**
-     * Display the action possible during a fight
+     * Renders the dynamic combat menu based on the acting Servant's loaded skills.
      *
-     * @param availableActions List of action available to use
-     * @return The player input
+     * @param availableActions The list of actions the current Servant is permitted to execute.
+     * @return The validated index corresponding to the player's chosen attack.
      */
     public int showCombatMenu(List<Action> availableActions) {
         printSystemDialogue("Your turn. Select an action:");
@@ -178,11 +181,12 @@ public class ConsoleManager {
     }
 
     /**
-     * Display the current status of both servants during a fight
+     * Renders the current state of the battlefield, indicating turn progression and displaying
+     * comparative health and attack values for both combatants.
      *
-     * @param turn   The current turn number
-     * @param player The player's servant
-     * @param enemy  The enemy's servant
+     * @param turn   The current chronological turn number.
+     * @param player The Servant allied with the player.
+     * @param enemy  The opposing enemy Servant.
      */
     public void printCombatStatus(int turn, Servant player, Servant enemy) {
         printSeparator();
@@ -202,7 +206,10 @@ public class ConsoleManager {
     }
 
     /**
-     * Displays the outcome of an Action
+     * Displays a string describing the execution and consequences of a combat action
+     * using the decoupled ActionResult payload.
+     *
+     * @param result The DTO containing the mathematical and status results of the action.
      */
     public void printActionResult(ActionResult result) {
         if (result.isCritical()) {
@@ -220,6 +227,11 @@ public class ConsoleManager {
         }
     }
 
+    /**
+     * Evaluates a level-up payload and visually announces statistical growth if a level boundary was crossed.
+     *
+     * @param result The DTO detailing pre and post-experience stats.
+     */
     public void printLevelUp(LevelUpResult result) {
         if (!result.leveledUp()) return;
 
