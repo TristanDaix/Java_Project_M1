@@ -276,9 +276,9 @@ public class ConsoleManager {
      */
     public void printLevelUp(LevelUpResult result) {
         if (!result.leveledUp()) return;
-        // TODO mp
         printActionDialogue("LEVEL UP! Reached Level " + result.newLevel() + "!");
         printActionDialogue("ATK: " + result.oldAtk() + " -> " + result.newAtk());
         printActionDialogue("HP: " + result.oldHp() + " -> " + result.newHp());
+        printActionDialogue("MP: " + result.oldMp() + " -> " + result.newMp());
     }
 }

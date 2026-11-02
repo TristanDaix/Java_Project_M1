@@ -199,11 +199,12 @@ public class Servant {
      * @return A LevelUpResult detailing the statistical changes during the transaction.
      */
     public LevelUpResult gainExp(double exp) {
-        if (exp < 0) return new LevelUpResult(false, level, level, atk, atk, maxHp, maxHp);
+        if (exp < 0) return new LevelUpResult(false, level, level, atk, atk, maxHp, maxHp, maxMp, maxMp);
 
         int startLevel = this.level;
         int startAtk = this.atk;
         int startHp = this.maxHp;
+        int startMp = this.mp;
 
         this.exp += exp;
         while (this.exp >= 100) {
@@ -212,6 +213,6 @@ public class Servant {
         }
 
         boolean leveledUp = this.level > startLevel;
-        return new LevelUpResult(leveledUp, startLevel, this.level, startAtk, this.atk, startHp, this.maxHp);
+        return new LevelUpResult(leveledUp, startLevel, this.level, startAtk, this.atk, startHp, this.maxHp, startMp, this.maxMp);
     }
 }
