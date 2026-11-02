@@ -43,6 +43,8 @@ public class AttackAction implements Action {
         double totalCritMultiplier = source.getCriticalMultiplier() * source.getServantClass().getCriticalMultiplier();
 
         int damage = (int) (source.getAtk() * source.getServantClass().getAttackMultiplier());
+        damage += (int) (Math.random() * 20) - 10; // add random value between -10 and 10 to damage
+
         boolean isCritical = Math.random() < totalCritRate;
         if (isCritical) {
             damage = (int) (damage * totalCritMultiplier);

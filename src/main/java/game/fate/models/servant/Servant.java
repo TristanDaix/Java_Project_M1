@@ -204,7 +204,7 @@ public class Servant {
         int startLevel = this.level;
         int startAtk = this.atk;
         int startHp = this.maxHp;
-        int startMp = this.mp;
+        int startMp = this.maxMp;
 
         this.exp += exp;
         while (this.exp >= 100) {
