@@ -1,7 +1,7 @@
 package game.fate.models.master;
 
 import game.fate.models.actions.Action;
-import game.fate.models.servantClass.Servant;
+import game.fate.models.servant.Servant;
 
 /**
  * Defines the decision-making entity capable of commanding a Servant during a turn.

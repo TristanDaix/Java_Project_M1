@@ -1,8 +1,8 @@
 package game.fate.utils;
 
 import game.fate.exceptions.UnknowServantClassException;
-import game.fate.models.servantClass.Servant;
-import game.fate.models.servantClass.ServantClass;
+import game.fate.models.servant.Servant;
+import game.fate.models.servant.ServantClass;
 import game.fate.services.factories.ServantFactory;
 
 import java.io.IOException;
@@ -19,8 +19,47 @@ import java.util.List;
 public class CsvReader {
 
     /**
+     * Reads a formatted CSV file and set the data for the different servant class.
+     * Catches structural exceptions to prevent crashes on malformed data.
+     *
+     * @param filePath The local system path resolving to the target CSV document.
+     */
+    public static void loadClasses(String filePath) {
+        Path path = Path.of(filePath);
+        try {
+            List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
+            for (int i = 1; i < lines.size(); i++) {
+                String line = lines.get(i);
+                if (line.isBlank()) continue;
+
+                String[] fields = line.split(",");
+                String className = fields[0].trim().toUpperCase();
+                int sortOrder = Integer.parseInt(fields[1].trim());
+                double atkMultiplier = Double.parseDouble(fields[2].trim());
+                double criticalMultiplier = Double.parseDouble(fields[3].trim());
+                double criticalRate = Double.parseDouble(fields[4].trim());
+
+                try {
+                    ServantClass servantClass = ServantClass.valueOf(className);
+                    servantClass.setStats(sortOrder, atkMultiplier, criticalMultiplier, criticalRate);
+                } catch (IllegalArgumentException e) {
+                    throw new UnknowServantClassException(className);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error: Unable to read file " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Invalid number format " + e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("Error: Invalid array index " + e.getMessage());
+        } catch (UnknowServantClassException e) {
+            System.err.println("Error: Unknow servant class " + e.getMessage());
+        }
+    }
+
+    /**
      * Reads a formatted CSV file and constructs a master list of Servant entities.
-     * Silently catches structural exceptions to prevent crashes on malformed data, and returns
+     * Catches structural exceptions to prevent crashes on malformed data, and returns
      * the successfully parsed list sorted primarily by class order and secondarily by name.
      *
      * @param filePath The local system path resolving to the target CSV document.
@@ -72,9 +111,10 @@ public class CsvReader {
         String name = fields[1].trim();
         String className = fields[2].trim();
         int maxHp = Integer.parseInt(fields[3].trim());
-        int atk = Integer.parseInt(fields[4].trim());
-        double criticalMultiplier = Double.parseDouble(fields[5].trim());
-        double criticalRate = Double.parseDouble(fields[6].trim());
+        int maxMP = Integer.parseInt(fields[4].trim());
+        int atk = Integer.parseInt(fields[5].trim());
+        double criticalMultiplier = Double.parseDouble(fields[6].trim());
+        double criticalRate = Double.parseDouble(fields[7].trim());
 
         ServantClass servantClass;
         try {
@@ -84,6 +124,6 @@ public class CsvReader {
         }
 
         // Delegate object construction to ServantFactory
-        return ServantFactory.createServant(id, name, servantClass, maxHp, atk, criticalMultiplier, criticalRate);
+        return ServantFactory.createServant(id, name, servantClass, maxHp, maxMP, atk, criticalMultiplier, criticalRate);
     }
 }

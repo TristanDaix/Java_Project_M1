@@ -1,4 +1,4 @@
-package game.fate.models.servantClass;
+package game.fate.models.servant;
 
 import game.fate.models.actions.Action;
 import game.fate.models.dto.LevelUpResult;
@@ -7,15 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Abstract foundation representing a summoned Heroic Spirit.
+ * Foundation representing a summoned Heroic Spirit.
  * Manages core combat attributes, health lifecycle, progression, and available actions.
  */
-public abstract class Servant {
+public class Servant {
     private final int id; // The Servant's unique identifier
     private final String name; // Lore identity
     private final ServantClass servantClass; // Class modifiers
     private int hp; // Current hp
     private int maxHp; // Maximum hp amount possible
+    private int mp; // Current mp
+    private int maxMp; // Maximum mp amount possible
     private int atk; // combat attack value
     private int level; // Level metric
     private double exp; // Experience metric
@@ -31,16 +33,19 @@ public abstract class Servant {
      * @param name               The identity of the Servant.
      * @param servantClass       The foundational class modifiers.
      * @param maxHp              The initial maximum health.
+     * @param maxMp              The initial maximum magic point
      * @param atk                The base attack power.
      * @param criticalMultiplier The personal damage multiplier upon landing a critical hit (stacks with class multiplier).
      * @param criticalRate       The personal chance addition to land a critical hit.
      */
-    public Servant(int id, String name, ServantClass servantClass, int maxHp, int atk, double criticalMultiplier, double criticalRate) {
+    public Servant(int id, String name, ServantClass servantClass, int maxHp, int maxMp, int atk, double criticalMultiplier, double criticalRate) {
         this.id = id;
         this.name = name;
         this.servantClass = servantClass;
         this.hp = maxHp;
         this.maxHp = maxHp;
+        this.maxMp = maxMp;
+        this.mp = maxMp;
         this.atk = atk;
         this.level = 1;
         this.exp = 0.0;
@@ -50,13 +55,13 @@ public abstract class Servant {
     }
 
     /**
-     * Returns a formatted summary string containing the Servant's class, name, maximum health, and attack power.
+     * Returns a formatted summary string containing the Servant's class, name, maximum health, maximum magic point and attack power.
      *
      * @return Formatted character profile string.
      */
     @Override
     public String toString() {
-        return servantClass + " " + this.name + " (" + this.maxHp + " HP, " + this.atk + " ATK)";
+        return servantClass + " " + this.name + " (" + this.maxHp + " HP, " + this.maxMp + " MP, " + this.atk + " ATK)";
     }
 
     /**
@@ -80,6 +85,14 @@ public abstract class Servant {
 
     public int getMaxHp() {
         return maxHp;
+    }
+
+    public int getMp() {
+        return mp;
+    }
+
+    public int getMaxMp() {
+        return maxMp;
     }
 
     public int getAtk() {
@@ -148,12 +161,34 @@ public abstract class Servant {
     }
 
     /**
-     * Increments the Servant's level and scales base attack and maximum health by 20%.
+     * Consumes MP safely. Prevents dropping below 0.
+     * @param amount The numerical mp to consume. Ignores amounts <= 0.
+     */
+    public void consumeMp(int amount) {
+        if (amount <= 0) return;
+        this.mp = Math.max(0, this.mp - amount);
+    }
+
+    /**
+     * Restores MP up to the maximum capacity.
+     *
+     * @param amount The numerical mp to restore. Ignores amounts <= 0.
+     */
+    public void restoreMp(int amount) {
+        if (amount <= 0) return;
+        this.mp = Math.min(this.maxMp, this.mp + amount);
+    }
+
+    /**
+     * Increments the Servant's level and scales base attack, maximum magic point and maximum health by 20%.
      */
     public void levelUp() {
         this.level++;
         this.atk = (int) (this.atk * 1.2);
         this.maxHp = (int) (this.maxHp * 1.2);
+        this.maxMp = (int) (this.maxMp * 1.2);
+        this.hp = maxHp;
+        this.mp = maxMp;
     }
 
     /**

@@ -4,7 +4,7 @@ import game.fate.exceptions.NotEnoughServantsException;
 import game.fate.models.actions.Action;
 import game.fate.models.dto.ActionResult;
 import game.fate.models.dto.LevelUpResult;
-import game.fate.models.servantClass.Servant;
+import game.fate.models.servant.Servant;
 
 import java.util.List;
 import java.util.Scanner;
@@ -22,6 +22,7 @@ public class ConsoleManager {
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
     public static final String BLUE = "\u001B[34m";
+    public static final String PURPLE = "\u001B[35m";
     public static final String CYAN = "\u001B[36m";
     public static final String BOLD = "\u001B[1m";
     public static final String ITALIC = "\u001B[3m";
@@ -146,7 +147,7 @@ public class ConsoleManager {
             int choice = readIntInput();
             if (choice >= 1 && choice <= servants.size()) {
                 Servant servant = servants.get(choice - 1);
-                printCharacterDialogue(servant.getName(), "Are you my master ?"); // TODO: class or character specific
+                printCharacterDialogue(servant.getName(), "Are you my master ?");
                 printOption(1, "Yes");
                 printOption(2, "No");
 
@@ -163,20 +164,25 @@ public class ConsoleManager {
      * Renders the dynamic combat menu based on the acting Servant's loaded skills.
      *
      * @param availableActions The list of actions the current Servant is permitted to execute.
+     * @param player The player's servant to check if he has enough MP to perform the selected action.
      * @return The validated index corresponding to the player's chosen attack.
      */
-    public int showCombatMenu(List<Action> availableActions) {
+    public int showCombatMenu(List<Action> availableActions, Servant player) {
         printSystemDialogue("Your turn. Select an action:");
         for (int i = 0; i < availableActions.size(); i++) {
-            printOption(i + 1, availableActions.get(i).getName());
+            Action action = availableActions.get(i);
+            printOption(i + 1, action.getName() + " [" + action.getMpCost() + " MP]");
         }
 
         while (true) {
             int choice = readIntInput();
             if (choice >= 1 && choice <= availableActions.size()) {
-                return choice;
-            }
-            printSystemDialogue("Invalid choice. Please select a valid action.");
+                if (player.getMp() >= availableActions.get(choice - 1).getMpCost()) {
+                    return choice;
+                } else {
+                    printSystemDialogue("Not enough MP for that action!");
+                }
+            } else printSystemDialogue("Invalid choice.");
         }
     }
 
@@ -194,13 +200,13 @@ public class ConsoleManager {
 
         // Display player
         System.out.println(BLUE + BOLD + "[YOU] " + player.getName() + RESET + " (" + player.getServantClass() + ")");
-        System.out.println(GREEN + player.getHp() + " HP " + RESET + " | " + RED + player.getAtk() + " ATK" + RESET);
+        System.out.println(GREEN + player.getHp() + " HP " + RESET + " | " + PURPLE + player.getMp() + " MP " + RESET + " | " + RED + player.getAtk() + " ATK" + RESET);
 
         System.out.println(" VS ");
 
         // Display enemy
         System.out.println(BLUE + BOLD + "[ENEMY] " + enemy.getName() + RESET + " (" + enemy.getServantClass() + ")");
-        System.out.println(GREEN + enemy.getHp() + " HP " + RESET + " | " + RED + enemy.getAtk() + " ATK" + RESET);
+        System.out.println(GREEN + enemy.getHp() + " HP " + RESET + " | " + PURPLE + enemy.getMp() + " MP " + RESET + " | " + RED + enemy.getAtk() + " ATK" + RESET);
 
         System.out.print("\n");
     }
@@ -212,18 +218,54 @@ public class ConsoleManager {
      * @param result The DTO containing the mathematical and status results of the action.
      */
     public void printActionResult(ActionResult result) {
-        if (result.isCritical()) {
-            printActionDialogue("CRITICAL HIT !");
+        // Announce the action
+        if (result.targetName() != null && !result.sourceName().equals(result.targetName())) {
+            printActionDialogue(result.sourceName() + " used " + result.actionName() + " on " + result.targetName() + "!");
+        } else {
+            printActionDialogue(result.sourceName() + " used " + result.actionName() + "!");
         }
 
-        String effectType = result.healthChange() < 0 ? "damage" : "healing";
-        int amount = Math.abs(result.healthChange());
+        // Display the special message
+        if (result.specialMessage() != null && !result.specialMessage().isBlank()) {
+            printActionDialogue(result.specialMessage());
+        }
 
-        printActionDialogue(result.sourceName() + " used " + result.actionName() +
-                " on " + result.targetName() + " causing " + amount + " " + effectType + " !");
+        // Display Critical Hit status
+        if (result.isCritical()) {
+            printActionDialogue(YELLOW + BOLD + "CRITICAL HIT !" + RESET);
+        }
 
+        // Display Target Health changes (Damage or Healing)
+        if (result.targetHealthChange() < 0) {
+            printActionDialogue(result.targetName() + " took " + RED + Math.abs(result.targetHealthChange()) + " damage" + RESET + ".");
+        } else if (result.targetHealthChange() > 0) {
+            printActionDialogue(result.targetName() + " was healed for " + GREEN + result.targetHealthChange() + " HP" + RESET + ".");
+        }
+
+        // Display Source Health changes (Recoil damage or Lifesteal/Self-heal)
+        if (result.sourceHealthChange() < 0) {
+            printActionDialogue(result.sourceName() + " took " + RED + Math.abs(result.sourceHealthChange()) + " recoil damage" + RESET + ".");
+        } else if (result.sourceHealthChange() > 0) {
+            printActionDialogue(result.sourceName() + " recovered " + GREEN + result.sourceHealthChange() + " HP" + RESET + ".");
+        }
+
+        // Display Source MP changes (MP Cost consumed or MP Restored)
+        if (result.sourceMpChange() < 0) {
+            printActionDialogue(result.sourceName() + " consumed " + PURPLE + Math.abs(result.sourceMpChange()) + " MP" + RESET + ".");
+        } else if (result.sourceMpChange() > 0) {
+            printActionDialogue(result.sourceName() + " restored " + PURPLE + result.sourceMpChange() + " MP" + RESET + ".");
+        }
+
+        // Display Target MP changes (MP Drain / MP Burn from enemies)
+        if (result.targetMpChange() < 0) {
+            printActionDialogue(result.targetName() + " lost " + PURPLE + Math.abs(result.targetMpChange()) + " MP" + RESET + ".");
+        } else if (result.targetMpChange() > 0) {
+            printActionDialogue(result.targetName() + " gained " + PURPLE + result.targetMpChange() + " MP" + RESET + ".");
+        }
+
+        // Display Death state
         if (result.targetDefeated()) {
-            printActionDialogue(result.targetName() + " has been defeated !");
+            printActionDialogue(RED + BOLD + result.targetName() + " has been defeated !" + RESET);
         }
     }
 
@@ -234,7 +276,7 @@ public class ConsoleManager {
      */
     public void printLevelUp(LevelUpResult result) {
         if (!result.leveledUp()) return;
-
+        // TODO mp
         printActionDialogue("LEVEL UP! Reached Level " + result.newLevel() + "!");
         printActionDialogue("ATK: " + result.oldAtk() + " -> " + result.newAtk());
         printActionDialogue("HP: " + result.oldHp() + " -> " + result.newHp());

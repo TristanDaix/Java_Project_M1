@@ -1,7 +1,7 @@
 package game.fate.models.master;
 
 import game.fate.models.actions.Action;
-import game.fate.models.servantClass.Servant;
+import game.fate.models.servant.Servant;
 
 import java.util.List;
 
@@ -16,7 +16,10 @@ public class AIMaster implements Master {
      * @return A randomly selected Action.
      */
     public Action selectAction(Servant servant) {
-        List<Action> actions = servant.getAvailableActions();
-        return actions.get((int) (Math.random() * actions.size()));
+        List<Action> validActions = servant.getAvailableActions().stream()
+                .filter(a -> a.getMpCost() <= servant.getMp())
+                .toList();
+
+        return validActions.get((int) (Math.random() * validActions.size()));
     }
 }

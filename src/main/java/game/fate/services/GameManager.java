@@ -8,8 +8,8 @@ import game.fate.models.dto.LevelUpResult;
 import game.fate.models.master.AIMaster;
 import game.fate.models.master.HumanMaster;
 import game.fate.models.master.Master;
-import game.fate.models.servantClass.Servant;
-import game.fate.models.servantClass.ServantClass;
+import game.fate.models.servant.Servant;
+import game.fate.models.servant.ServantClass;
 import game.fate.utils.CsvReader;
 
 import java.util.*;
@@ -24,8 +24,8 @@ public class GameManager {
     /**
      * Initializes the underlying game state and its UI dependencies.
      */
-    public GameManager() {
-        this.console = new ConsoleManager();
+    public GameManager(ConsoleManager console) {
+        this.console = console;
     }
 
     /**
@@ -42,6 +42,7 @@ public class GameManager {
      * generating an enemy roster, and looping sequentially through combat encounters.
      */
     public void start() {
+        CsvReader.loadClasses("src/main/resources/classes.csv");
         List<Servant> servants = CsvReader.loadServants("src/main/resources/servants.csv");
         Servant playerServant;
 
@@ -65,7 +66,7 @@ public class GameManager {
         }
 
         console.printSystemDialogue("The 6 enemy servants are: ");
-        enemyRoster.forEach(System.out::println);
+        enemyRoster.forEach(p -> System.out.println(p.getServant()));
 
         for (MasterServantPair enemyPair : enemyRoster) {
             startFight(playerPair, enemyPair);
@@ -75,7 +76,8 @@ public class GameManager {
                 break;
             } else {
                 playerServant.heal(playerServant.getMaxHp());
-                console.printActionDialogue(playerServant.getName() + " has been fully healed for the next battle.");
+                playerServant.restoreMp((playerServant.getMaxMp()));
+                console.printActionDialogue(playerServant.getName() + " has been fully healed and restored MP for the next battle.");
             }
         }
 
@@ -102,6 +104,11 @@ public class GameManager {
 
         for (Servant servant : availableServants) {
             if (!selectedClasses.contains(servant.getServantClass())) {
+
+                for (int i = 0; i < enemyRoster.size(); i++) {
+                    servant.levelUp();
+                }
+
                 enemyRoster.add(new MasterServantPair(new AIMaster(), servant));
                 selectedClasses.add(servant.getServantClass());
             }
@@ -136,12 +143,12 @@ public class GameManager {
             this.console.printCombatStatus(turn, playerServant, enemyServant);
 
             // Player Turn
-            Action playerAction = playerPair.issueCommand(); // TODO also wrap execute ?
+            Action playerAction = playerPair.issueCommand();
             ActionResult playerResult = playerAction.execute(playerServant, enemyServant);
             this.console.printActionResult(playerResult);
 
             if (!enemyServant.isAlive()) {
-                LevelUpResult levelResult = playerServant.gainExp(100); // TODO: depend on level / servant
+                LevelUpResult levelResult = playerServant.gainExp(100);
                 this.console.printSystemDialogue(playerServant.getName() + " gained 100 EXP!");
                 this.console.printLevelUp(levelResult);
                 break;

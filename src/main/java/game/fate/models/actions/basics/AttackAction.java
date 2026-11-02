@@ -1,7 +1,8 @@
-package game.fate.models.actions;
+package game.fate.models.actions.basics;
 
+import game.fate.models.actions.Action;
 import game.fate.models.dto.ActionResult;
-import game.fate.models.servantClass.Servant;
+import game.fate.models.servant.Servant;
 
 /**
  * Represents a standard physical attack action.
@@ -16,6 +17,16 @@ public class AttackAction implements Action {
     @Override
     public String getName() {
         return "Attack";
+    }
+
+    /**
+     * Return the cost for a base attack
+     *
+     * @return 0
+     */
+    @Override
+    public int getMpCost() {
+        return 0;
     }
 
     /**
@@ -44,8 +55,12 @@ public class AttackAction implements Action {
                 target.getName(),
                 getName(),
                 -damage,
+                0,
+                0,
+                0,
                 isCritical,
-                !target.isAlive()
+                !target.isAlive(),
+                null
         );
     }
 }

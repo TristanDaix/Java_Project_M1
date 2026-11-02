@@ -1,0 +1,8 @@
+className,sortOrder,attackMultiplier,criticalMultiplier,criticalRate
+SABER,1,1.0,1.5,0.1
+ARCHER,2,0.95,1.6,0.2
+LANCER,3,1.05,1.5,0.1
+RIDER,4,1.0,1.6,0.15
+CASTER,5,0.9,1.2,0.05
+ASSASSIN,6,0.9,2.0,0.3
+BERSERKER,7,1.15,1.5,0.05

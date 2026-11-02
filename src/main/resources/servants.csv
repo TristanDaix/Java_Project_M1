@@ -1,8 +1,8 @@
-id,name,servantClass,hp,atk,criticalMultiplier,criticalRate
-1,Artoria Pendragon,Saber,1200,110,999.5,1.0
-2,Emiya,Archer,1050,95,1.5,0.1
-3,Cu Chulainn,Lancer,1100,90,1.5,0.1
-4,Medusa,Rider,1000,92,1.5,0.1
-5,Medea,Caster,900,85,1.5,0.1
-6,Sasaki Kojiro,Assassin,850,88,1.5,0.1
-7,Herakles,Berserker,1400,125,1.5,0.1
+id,name,servantClass,hp,mp,atk,criticalMultiplier,criticalRate
+1,Artoria Pendragon,SABER,1200,100,100,1.2,0.05
+2,Emiya,ARCHER,1050,120,95,1.3,0.1
+3,Cu Chulainn,LANCER,1100,90,105,1.2,0.05
+4,Medusa,RIDER,1100,110,95,1.3,0.1
+5,Medea,CASTER,1300,200,80,1.1,0.0
+6,Sasaki Kojiro,ASSASSIN,850,80,90,1.5,0.15
+7,Heracles,BERSERKER,1320,60,110,1.0,0.0

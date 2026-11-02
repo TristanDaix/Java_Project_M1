@@ -2,7 +2,7 @@ package game.fate.models;
 
 import game.fate.models.actions.Action;
 import game.fate.models.master.Master;
-import game.fate.models.servantClass.Servant;
+import game.fate.models.servant.Servant;
 
 /**
  * Represents a binding contract between a Master and a Servant during the Holy Grail War.

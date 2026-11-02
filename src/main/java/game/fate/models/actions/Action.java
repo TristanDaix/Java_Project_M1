@@ -1,7 +1,7 @@
 package game.fate.models.actions;
 
 import game.fate.models.dto.ActionResult;
-import game.fate.models.servantClass.Servant;
+import game.fate.models.servant.Servant;
 
 /**
  * Command interface representing a usable combat action or skill executable during a battle.
@@ -13,6 +13,13 @@ public interface Action {
      * @return The string representation of the action's name.
      */
     String getName();
+
+    /**
+     * Retrieves the MP cost of this combat action
+     *
+     * @return The MP needed to perform the action
+     */
+    int getMpCost();
 
     /**
      * Executes the combat calculations and side effects of this action.

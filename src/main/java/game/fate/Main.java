@@ -16,8 +16,8 @@ public class Main {
      * @param args Command-line arguments passed during application startup.
      */
     public static void main(String[] args) {
-        GameManager game = new GameManager();
-        ConsoleManager console = game.getConsole();
+        ConsoleManager console = new ConsoleManager();
+        GameManager game = new GameManager(console);
 
         boolean running = true;
         while (running) {
@@ -42,10 +42,9 @@ public class Main {
     }
 }
 
-// TODO: replace every enemy occurence by opponent
-// TODO: action by command
+// TODO: add random to attack
+// TODO: Fate/Extra combat with attack def break
 // TODO: COMMENTS
-// TODO: specific class behavior
-// TODO: class advantage
+// TODO: use np only one time and after a certain time
 // TODO: between fight
 // TODO: Win
