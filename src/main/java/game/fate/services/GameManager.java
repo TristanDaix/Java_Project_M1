@@ -1,11 +1,13 @@
 package game.fate.services;
 
 import game.fate.exceptions.NotEnoughServantsException;
+import game.fate.exceptions.UnavailablePatternException;
 import game.fate.models.MasterServantPair;
 import game.fate.models.actions.Action;
+import game.fate.models.actions.ActionType;
 import game.fate.models.dto.ActionResult;
 import game.fate.models.dto.LevelUpResult;
-import game.fate.models.master.AIMaster;
+import game.fate.models.master.PatternAIMaster;
 import game.fate.models.master.HumanMaster;
 import game.fate.models.master.Master;
 import game.fate.models.servant.Servant;
@@ -44,8 +46,9 @@ public class GameManager {
     public void start() {
         CsvReader.loadClasses("src/main/resources/classes.csv");
         List<Servant> servants = CsvReader.loadServants("src/main/resources/servants.csv");
-        Servant playerServant;
+        Map<Integer, ActionType[]> patterns = CsvReader.loadPatterns("src/main/resources/patterns.csv");
 
+        Servant playerServant;
         try {
             playerServant = this.console.showSelectServantMenu(servants);
         } catch (NotEnoughServantsException e) {
@@ -59,7 +62,7 @@ public class GameManager {
         console.printSystemDialogue("Generating the other 6 servant for the Holy Grail War...");
         List<MasterServantPair> enemyRoster;
         try {
-            enemyRoster = generateEnemyRoster(playerServant, servants);
+            enemyRoster = generateEnemyRoster(playerServant, servants, patterns);
         } catch (NotEnoughServantsException e) {
             System.err.println(e.getMessage());
             return;
@@ -92,7 +95,7 @@ public class GameManager {
      * @return A randomized list of exactly 6 unique enemy pairs.
      * @throws NotEnoughServantsException If the dictionary lacks sufficient class diversity to satisfy generation constraints.
      */
-    private List<MasterServantPair> generateEnemyRoster(Servant playerServant, List<Servant> allServants) throws NotEnoughServantsException {
+    private List<MasterServantPair> generateEnemyRoster(Servant playerServant, List<Servant> allServants, Map<Integer, ActionType[]> patterns) throws NotEnoughServantsException {
         List<Servant> availableServants = new ArrayList<>(allServants.stream()
                 .filter(s -> !s.getServantClass().equals(playerServant.getServantClass()))
                 .toList());
@@ -109,7 +112,12 @@ public class GameManager {
                     servant.levelUp(); // increase difficulty each fight
                 }
 
-                enemyRoster.add(new MasterServantPair(new AIMaster(), servant));
+                ActionType[] enemyPattern = patterns.get(servant.getId());
+                if (enemyPattern == null) {
+                    throw new UnavailablePatternException("Error: Unable to find a pattern for the servant " + servant.getId());
+                }
+                enemyRoster.add(new MasterServantPair(new PatternAIMaster(enemyPattern), servant));
+                //enemyRoster.add(new MasterServantPair(new RandomAIMaster(), servant));
                 selectedClasses.add(servant.getServantClass());
             }
 

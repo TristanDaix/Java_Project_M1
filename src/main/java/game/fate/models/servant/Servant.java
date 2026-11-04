@@ -162,6 +162,7 @@ public class Servant {
 
     /**
      * Consumes MP safely. Prevents dropping below 0.
+     *
      * @param amount The numerical mp to consume. Ignores amounts <= 0.
      */
     public void consumeMp(int amount) {

@@ -42,7 +42,3 @@ public class Main {
     }
 }
 
-// TODO: COMMENTS
-// TODO: use np only one time and after a certain time
-// TODO: between fight
-// TODO: Win

@@ -1,0 +1,8 @@
+servantId,action1,action2,action3,action4,action5,action6,action7,action8,action9,action10
+1,Attack,Defense,Attack,Break,Skill,Attack,Defense,Attack,Break,NP
+2,Attack,Break,Defense,Skill,Attack,Break,Defense,NP
+3,Attack,Defense,Break,Skill,Attack,Defense,Break,NP
+4,Attack,Break,Defense,Defense,Skill,Attack,Break,Defense,Defense,NP
+5,Defense,Attack,Defense,Break,Skill,Defense,Attack,Defense,Break,NP
+6,Break,Attack,Attack,Defense,Skill,Break,Attack,Break,Defense,NP
+7,Attack,Attack,Break,Skill,Attack,Attack,Break,NP

@@ -1,6 +1,8 @@
 package game.fate.utils;
 
+import game.fate.exceptions.UnknowActionException;
 import game.fate.exceptions.UnknowServantClassException;
+import game.fate.models.actions.ActionType;
 import game.fate.models.servant.Servant;
 import game.fate.models.servant.ServantClass;
 import game.fate.services.factories.ServantFactory;
@@ -9,9 +11,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Utility responsible for deserializing external game data files into active Java objects.
@@ -32,6 +32,7 @@ public class CsvReader {
                 String line = lines.get(i);
                 if (line.isBlank()) continue;
 
+                // TODO: separate
                 String[] fields = line.split(",");
                 String className = fields[0].trim().toUpperCase();
                 int sortOrder = Integer.parseInt(fields[1].trim());
@@ -125,5 +126,52 @@ public class CsvReader {
 
         // Delegate object construction to ServantFactory
         return ServantFactory.createServant(id, name, servantClass, maxHp, maxMP, atk, criticalMultiplier, criticalRate);
+    }
+
+    /**
+     * Reads a formatted CSV file and constructs a mapping of Servant id to their combat patterns.
+     *
+     * @param filePath The local system path resolving to the target CSV document.
+     * @return A map linking a ServantId to its sequential array of action names.
+     */
+    public static Map<Integer, ActionType[]> loadPatterns(String filePath) {
+        Map<Integer, ActionType[]> patterns = new HashMap<>();
+        Path path = Path.of(filePath);
+
+        try {
+            List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
+
+            for (int i = 1; i < lines.size(); i++) {
+                String line = lines.get(i);
+                if (line.isBlank()) continue;
+
+                // TODO: separate
+                String[] fields = line.split(",");
+                int id = Integer.parseInt(fields[0].trim());
+
+                ActionType[] pattern = new ActionType[fields.length - 1];
+                for (int j = 1; j < fields.length; j++) {
+                    String actionType = fields[j].trim();
+
+                    try {
+                        pattern[j - 1] = ActionType.valueOf(actionType.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new UnknowActionException(actionType);
+                    }
+                }
+
+                patterns.put(id, pattern);
+            }
+        } catch (IOException e) {
+            System.err.println("Error: Unable to read file " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Invalid number format " + e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("Error: Invalid array index " + e.getMessage());
+        } catch (UnknowActionException e) {
+            System.err.println("Error: Unknow action " + e.getMessage());
+        }
+
+        return patterns;
     }
 }

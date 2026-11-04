@@ -6,9 +6,10 @@ import game.fate.models.servant.Servant;
 import java.util.List;
 
 /**
- * An artificial intelligence implementation of a Master that selects combat actions automatically.
+ * An artificial intelligence implementation of a Master that selects combat actions randomly.
  */
-public class AIMaster implements Master {
+@Deprecated
+public class RandomAIMaster implements Master {
     /**
      * Selects an action at random from the Servant's available combat actions.
      *
