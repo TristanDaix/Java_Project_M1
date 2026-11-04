@@ -22,6 +22,13 @@ public interface Action {
     int getMpCost();
 
     /**
+     * Allow the engine to identify the type of move
+     *
+     * @return The type of action
+     */
+    ActionType getType();
+
+    /**
      * Executes the combat calculations and side effects of this action.
      *
      * @param source The Servant performing the action.

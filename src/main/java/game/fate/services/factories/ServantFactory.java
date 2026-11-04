@@ -1,6 +1,8 @@
 package game.fate.services.factories;
 
 import game.fate.models.actions.basics.AttackAction;
+import game.fate.models.actions.basics.BreakAction;
+import game.fate.models.actions.basics.DefenseAction;
 import game.fate.models.actions.noblephantasms.*;
 import game.fate.models.actions.skills.*;
 import game.fate.models.servant.*;
@@ -30,6 +32,8 @@ public class ServantFactory {
 
         // Add Basics Actions
         servant.addAction(new AttackAction());
+        servant.addAction(new DefenseAction());
+        servant.addAction(new BreakAction());
 
         // Add Class Skill
         switch (servantClass) {

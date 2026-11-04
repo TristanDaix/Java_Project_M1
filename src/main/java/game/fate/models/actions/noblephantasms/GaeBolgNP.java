@@ -1,6 +1,7 @@
 package game.fate.models.actions.noblephantasms;
 
 import game.fate.models.actions.Action;
+import game.fate.models.actions.ActionType;
 import game.fate.models.dto.ActionResult;
 import game.fate.models.servant.Servant;
 
@@ -13,6 +14,11 @@ public class GaeBolgNP implements Action {
     @Override
     public int getMpCost() {
         return 30;
+    }
+
+    @Override
+    public ActionType getType() {
+        return ActionType.NP;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package game.fate.models.actions.skills;
 
 import game.fate.models.actions.Action;
+import game.fate.models.actions.ActionType;
 import game.fate.models.dto.ActionResult;
 import game.fate.models.servant.Servant;
 
@@ -13,6 +14,11 @@ public class ManaBurstSkill implements Action {
     @Override
     public int getMpCost() {
         return 20;
+    }
+
+    @Override
+    public ActionType getType() {
+        return ActionType.SKILL;
     }
 
     @Override

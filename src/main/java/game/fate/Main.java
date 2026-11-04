@@ -42,8 +42,6 @@ public class Main {
     }
 }
 
-// TODO: add random to attack
-// TODO: Fate/Extra combat with attack def break
 // TODO: COMMENTS
 // TODO: use np only one time and after a certain time
 // TODO: between fight

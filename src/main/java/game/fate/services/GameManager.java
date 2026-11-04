@@ -106,7 +106,7 @@ public class GameManager {
             if (!selectedClasses.contains(servant.getServantClass())) {
 
                 for (int i = 0; i < enemyRoster.size(); i++) {
-                    servant.levelUp();
+                    servant.levelUp(); // increase difficulty each fight
                 }
 
                 enemyRoster.add(new MasterServantPair(new AIMaster(), servant));
@@ -135,6 +135,7 @@ public class GameManager {
     public void startFight(MasterServantPair playerPair, MasterServantPair enemyPair) {
         Servant playerServant = playerPair.getServant();
         Servant enemyServant = enemyPair.getServant();
+        CombatEngine combatEngine = new CombatEngine();
 
         int turn = 1;
         this.console.printHeader("BATTLE START: \n" + playerServant.getName() + " VS " + enemyServant.getName());
@@ -142,23 +143,23 @@ public class GameManager {
         while (playerServant.isAlive() && enemyServant.isAlive()) {
             this.console.printCombatStatus(turn, playerServant, enemyServant);
 
-            // Player Turn
+            // Command selection
+            Action enemyAction = enemyPair.issueCommand();
             Action playerAction = playerPair.issueCommand();
-            ActionResult playerResult = playerAction.execute(playerServant, enemyServant);
-            this.console.printActionResult(playerResult);
 
+            // Resolve
+            ActionResult[] results = combatEngine.resolveTurn(playerServant, playerAction, enemyServant, enemyAction);
+            for (ActionResult result : results) {
+                if (result != null) console.printActionResult(result);
+            }
+
+            // Check
             if (!enemyServant.isAlive()) {
                 LevelUpResult levelResult = playerServant.gainExp(100);
                 this.console.printSystemDialogue(playerServant.getName() + " gained 100 EXP!");
                 this.console.printLevelUp(levelResult);
                 break;
             }
-
-            // Enemy Turn
-            this.console.printSystemDialogue("Enemy's turn.");
-            Action enemyAction = enemyPair.issueCommand();
-            ActionResult enemyResult = enemyAction.execute(enemyServant, playerServant);
-            this.console.printActionResult(enemyResult);
 
             turn++;
         }

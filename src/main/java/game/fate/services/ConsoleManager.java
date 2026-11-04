@@ -115,7 +115,7 @@ public class ConsoleManager {
      */
     public int showMainMenu() {
         printHeader("ISEN HOLY GRAIL WAR - MAIN MENU");
-        System.out.println(" * This game was inspired by the universe * \n * of Fate/Stay Night & Fate/Grand Order. * ");
+        System.out.println(ITALIC + " * This game was inspired by the universe of Fate * \n * (Fate/Stay Night, Fate/Extra & Fate/Grand Order) * ");
         printOption(1, "Start game");
         printOption(2, "Quit game");
 
