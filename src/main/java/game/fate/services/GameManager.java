@@ -63,7 +63,7 @@ public class GameManager {
         List<MasterServantPair> enemyRoster;
         try {
             enemyRoster = generateEnemyRoster(playerServant, servants, patterns);
-        } catch (NotEnoughServantsException e) {
+        } catch (NotEnoughServantsException | UnavailablePatternException e) {
             System.err.println(e.getMessage());
             return;
         }
@@ -95,7 +95,7 @@ public class GameManager {
      * @return A randomized list of exactly 6 unique enemy pairs.
      * @throws NotEnoughServantsException If the dictionary lacks sufficient class diversity to satisfy generation constraints.
      */
-    private List<MasterServantPair> generateEnemyRoster(Servant playerServant, List<Servant> allServants, Map<Integer, ActionType[]> patterns) throws NotEnoughServantsException {
+    private List<MasterServantPair> generateEnemyRoster(Servant playerServant, List<Servant> allServants, Map<Integer, ActionType[]> patterns) throws NotEnoughServantsException, UnavailablePatternException {
         List<Servant> availableServants = new ArrayList<>(allServants.stream()
                 .filter(s -> !s.getServantClass().equals(playerServant.getServantClass()))
                 .toList());

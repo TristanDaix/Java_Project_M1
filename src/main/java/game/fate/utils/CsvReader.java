@@ -1,5 +1,6 @@
 package game.fate.utils;
 
+import game.fate.exceptions.UnavailablePatternException;
 import game.fate.exceptions.UnknowActionException;
 import game.fate.exceptions.UnknowServantClassException;
 import game.fate.models.actions.ActionType;
@@ -32,20 +33,7 @@ public class CsvReader {
                 String line = lines.get(i);
                 if (line.isBlank()) continue;
 
-                // TODO: separate
-                String[] fields = line.split(",");
-                String className = fields[0].trim().toUpperCase();
-                int sortOrder = Integer.parseInt(fields[1].trim());
-                double atkMultiplier = Double.parseDouble(fields[2].trim());
-                double criticalMultiplier = Double.parseDouble(fields[3].trim());
-                double criticalRate = Double.parseDouble(fields[4].trim());
-
-                try {
-                    ServantClass servantClass = ServantClass.valueOf(className);
-                    servantClass.setStats(sortOrder, atkMultiplier, criticalMultiplier, criticalRate);
-                } catch (IllegalArgumentException e) {
-                    throw new UnknowServantClassException(className);
-                }
+                parseClassDataFromLine(line);
             }
         } catch (IOException e) {
             System.err.println("Error: Unable to read file " + e.getMessage());
@@ -55,6 +43,31 @@ public class CsvReader {
             System.err.println("Error: Invalid array index " + e.getMessage());
         } catch (UnknowServantClassException e) {
             System.err.println("Error: Unknow servant class " + e.getMessage());
+        }
+    }
+
+    /**
+     * Parses a single row of comma-separated text into parameters and set the class data.
+     *
+     * @param line A single plaintext row representing one class's data.
+     * @throws NumberFormatException          If numerical columns contain invalid text.
+     * @throws ArrayIndexOutOfBoundsException If the line lacks the expected number of column fields.
+     * @throws UnknowServantClassException    If the designated class column fails to match a known ServantClass enumeration.
+     */
+    private static void parseClassDataFromLine(String line) throws NumberFormatException, ArrayIndexOutOfBoundsException, UnknowServantClassException {
+        String[] fields = line.split(",");
+
+        String className = fields[0].trim().toUpperCase();
+        int sortOrder = Integer.parseInt(fields[1].trim());
+        double atkMultiplier = Double.parseDouble(fields[2].trim());
+        double criticalMultiplier = Double.parseDouble(fields[3].trim());
+        double criticalRate = Double.parseDouble(fields[4].trim());
+
+        try {
+            ServantClass servantClass = ServantClass.valueOf(className);
+            servantClass.setStats(sortOrder, atkMultiplier, criticalMultiplier, criticalRate);
+        } catch (IllegalArgumentException e) {
+            throw new UnknowServantClassException(className);
         }
     }
 
@@ -145,33 +158,53 @@ public class CsvReader {
                 String line = lines.get(i);
                 if (line.isBlank()) continue;
 
-                // TODO: separate
-                String[] fields = line.split(",");
-                int id = Integer.parseInt(fields[0].trim());
-
-                ActionType[] pattern = new ActionType[fields.length - 1];
-                for (int j = 1; j < fields.length; j++) {
-                    String actionType = fields[j].trim();
-
-                    try {
-                        pattern[j - 1] = ActionType.valueOf(actionType.toUpperCase());
-                    } catch (IllegalArgumentException e) {
-                        throw new UnknowActionException(actionType);
-                    }
-                }
-
-                patterns.put(id, pattern);
+                parsePatternFromLine(line, patterns);
             }
         } catch (IOException e) {
             System.err.println("Error: Unable to read file " + e.getMessage());
         } catch (NumberFormatException e) {
-            System.err.println("Error: Invalid number format " + e.getMessage());
+            System.err.println("Error: Invalid number format " + e.getMessage() + " in file " + filePath);
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Error: Invalid array index " + e.getMessage());
+            System.err.println("Error: Invalid array index " + e.getMessage() + " in file " + filePath);
         } catch (UnknowActionException e) {
-            System.err.println("Error: Unknow action " + e.getMessage());
+            System.err.println("Error: Unknow action " + e.getMessage() + " in file " + filePath);
+        } catch (UnavailablePatternException e) {
+            System.err.println("Error: Unavailable pattern " + e.getMessage() + " in file " + filePath);
         }
 
         return patterns;
+    }
+
+    /**
+     * Parses a single row of comma-separated text into an element of a map associating an id to a list of action.
+     *
+     * @param line     A single plaintext row representing one pattern's data.
+     * @param patterns The map associating a servant id to its pattern (list of ActionType) where to add a new key,value parsed from the given line.
+     * @throws NumberFormatException          If numerical columns contain invalid text.
+     * @throws ArrayIndexOutOfBoundsException If the line lacks the expected number of column fields.
+     * @throws UnknowActionException          If the designated action column fails to match a known ActionType enumeration.
+     * @throws UnavailablePatternException    If the line does not contain any action to create a pattern.
+     */
+    private static void parsePatternFromLine(String line, Map<Integer, ActionType[]> patterns) throws NumberFormatException, ArrayIndexOutOfBoundsException, UnknowActionException, UnavailablePatternException {
+        String[] fields = line.split(",");
+
+        int id = Integer.parseInt(fields[0].trim());
+
+        ActionType[] pattern = new ActionType[fields.length - 1];
+        for (int j = 1; j < fields.length; j++) {
+            String actionType = fields[j].trim();
+
+            try {
+                pattern[j - 1] = ActionType.valueOf(actionType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new UnknowActionException(actionType);
+            }
+        }
+
+        if (pattern.length == 0) {
+            throw new UnavailablePatternException("The pattern for servant " + id + " is empty");
+        }
+
+        patterns.put(id, pattern);
     }
 }
