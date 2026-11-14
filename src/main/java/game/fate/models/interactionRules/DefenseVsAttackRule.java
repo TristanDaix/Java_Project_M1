@@ -25,6 +25,7 @@ public class DefenseVsAttackRule implements InteractionRule {
         Action counterAttack = new AttackAction();
         ActionResult counterResult = counterAttack.execute(defender, attacker);
 
+        // Only the defense/counter-attack executes, the attack fail
         return new ActionResult(
                 defender.getName(),
                 attacker.getName(),

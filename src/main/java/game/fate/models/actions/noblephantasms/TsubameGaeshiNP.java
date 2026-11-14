@@ -13,7 +13,7 @@ public class TsubameGaeshiNP implements Action {
 
     @Override
     public int getMpCost() {
-        return 30;
+        return 50;
     }
 
     @Override

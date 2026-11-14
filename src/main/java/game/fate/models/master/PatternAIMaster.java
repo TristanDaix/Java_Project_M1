@@ -14,7 +14,7 @@ public class PatternAIMaster implements Master {
     private int currentTurnIndex = 0; // Tracks which step of the pattern we are on
 
     /**
-     * Construct a AI master with a predefined pattern
+     * Construct an AI master with a predefined pattern
      *
      * @param pattern Array of Action names
      */
@@ -45,7 +45,7 @@ public class PatternAIMaster implements Master {
             chosenAction = availableActions.stream()
                     .filter(a -> a.getMpCost() <= servant.getMp())
                     .findFirst()
-                    .get();
+                    .orElse(null); // Impossible to happen, unless you remove the O MP action in servant factory
         }
 
         currentTurnIndex++;
