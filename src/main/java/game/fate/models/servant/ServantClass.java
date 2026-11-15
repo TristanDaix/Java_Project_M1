@@ -9,7 +9,7 @@ public enum ServantClass {
     ARCHER(2, 1.0, 1.0, 0.0),
     LANCER(3, 1.0, 1.0, 0.0),
     RIDER(4, 1.0, 1.0, 0.0),
-    CASTER(5, 1.0, 1.05, 0.0),
+    CASTER(5, 1.0, 1.0, 0.0),
     ASSASSIN(6, 1.0, 1.0, 0.0),
     BERSERKER(7, 1.0, 1.0, 0.0);
 
@@ -51,7 +51,7 @@ public enum ServantClass {
     /**
      * Standard accessor methods returning the current value of the respective ServantClass modificator.
      */
-    public double getSortOrder() {
+    public int getSortOrder() {
         return sortOrder;
     }
 

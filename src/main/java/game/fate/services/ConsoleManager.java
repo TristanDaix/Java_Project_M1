@@ -164,7 +164,7 @@ public class ConsoleManager {
      * Renders the dynamic combat menu based on the acting Servant's loaded skills.
      *
      * @param availableActions The list of actions the current Servant is permitted to execute.
-     * @param player The player's servant to check if he has enough MP to perform the selected action.
+     * @param player           The player's servant to check if he has enough MP to perform the selected action.
      * @return The validated index corresponding to the player's chosen attack.
      */
     public int showCombatMenu(List<Action> availableActions, Servant player) {

@@ -5,7 +5,8 @@ import game.fate.models.actions.basics.BreakAction;
 import game.fate.models.actions.basics.DefenseAction;
 import game.fate.models.actions.noblephantasms.*;
 import game.fate.models.actions.skills.*;
-import game.fate.models.servant.*;
+import game.fate.models.servant.Servant;
+import game.fate.models.servant.ServantClass;
 
 /**
  * Creational pattern implementation responsible for abstracting the instantiation of specific
