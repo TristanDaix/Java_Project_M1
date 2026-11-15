@@ -53,27 +53,78 @@ Right click on `src/test/java` and click `Run 'Tests in 'java''` directly from y
 | Defense                                          | Attack       | Attack is blocked and the defender counter-attacks |
 | Anything else (NP, Skill, Attack vs Attack, ...) |              | Both actions execute independently                 |
 
-### Class skills and Noble Phantasms
+### Choosing your Servant
 
-| Class     | Skill                                    | MP |
-|-----------|------------------------------------------|----|
-| Saber     | Mana Burst (big damage)                  | 20 |
-| Archer    | Clairvoyance (guaranteed critical hit)   | 15 |
-| Lancer    | Battle Continuation (heals)              | 15 |
-| Rider     | Voyager of the Storm (big damage)        | 20 |
-| Caster    | High-Speed Divine Words (restores MP)    | 0  |
-| Assassin  | Presence Concealment (fixed damage)      | 10 |
-| Berserker | Valor (big damage at the cost of 100 HP) | 15 |
+Seven Servants are available, one per class. The six you do not pick become your enemies, in a random order.
 
-| Servant ID | Noble Phantasm                                           | MP |
-|------------|----------------------------------------------------------|----|
-| 1          | Excalibur (very big damage)                              | 50 |
-| 2          | Unlimited Blade Works (1000 hit with small damage)       | 40 |
-| 3          | Gae Bolg (instant kill under 30% HP)                     | 30 |
-| 4          | Bellerophon (damage + lifesteal)                         | 40 |
-| 5          | Rule Breaker (damage + steals MP)                        | 40 |
-| 6          | Tsubame Gaeshi (triple hit with guaranteed critical hit) | 50 |
-| 7          | Nine Lives (very big damage)                             | 50 |
+**Servant roster**
+
+| ID | Servant           | Class     | HP   | MP  | ATK | Crit rate | Crit multiplier |
+|----|-------------------|-----------|------|-----|-----|-----------|-----------------|
+| 1  | Artoria Pendragon | Saber     | 1200 | 100 | 100 | 5%        | x1.2            |
+| 2  | Emiya             | Archer    | 1050 | 120 | 95  | 10%       | x1.3            |
+| 3  | Cu Chulainn       | Lancer    | 1100 | 90  | 105 | 5%        | x1.2            |
+| 4  | Medusa            | Rider     | 1100 | 110 | 95  | 10%       | x1.3            |
+| 5  | Medea             | Caster    | 1300 | 200 | 80  | 0%        | x1.1            |
+| 6  | Sasaki Kojiro     | Assassin  | 850  | 80  | 90  | 15%       | x1.5            |
+| 7  | Heracles          | Berserker | 1320 | 60  | 110 | 0%        | x1.0            |
+
+**Class modifiers**
+
+| Class     | ATK multiplier | Crit rate bonus | Crit multiplier |
+|-----------|----------------|-----------------|-----------------|
+| Saber     | x1.00          | +10%            | x1.5            |
+| Archer    | x0.95          | +20%            | x1.6            |
+| Lancer    | x1.05          | +10%            | x1.5            |
+| Rider     | x1.00          | +15%            | x1.6            |
+| Caster    | x0.90          | +5%             | x1.2            |
+| Assassin  | x0.90          | +30%            | x2.0            |
+| Berserker | x1.15          | +5%             | x1.5            |
+
+**Effective combat values** \
+Servant stats combine with class modifiers, before the random variation of -10 to +10 damage
+
+**Class skills**
+
+| Class     | Skill                   | Description                       | MP |
+|-----------|-------------------------|-----------------------------------|----|
+| Saber     | Mana Burst              | big damage                        | 20 |
+| Archer    | Clairvoyance            | guaranteed critical hit           | 15 |
+| Lancer    | Battle Continuation     | heals                             | 15 |
+| Rider     | Voyager of the Storm    | big damage                        | 20 |
+| Caster    | High-Speed Divine Words | restores MP                       | 0  |
+| Assassin  | Presence Concealment    | fixed damage                      | 10 |
+| Berserker | Valor                   | big damage at the cost of some HP | 15 |
+
+**Noble Phantasms**
+
+| Servant ID | Noble Phantasm        | Description                             | MP |
+|------------|-----------------------|-----------------------------------------|----|
+| 1          | Excalibur             | very big damage                         | 50 |
+| 2          | Unlimited Blade Works | 1000 hit with small damage              | 40 |
+| 3          | Gae Bolg              | instant kill under 30% HP               | 30 |
+| 4          | Bellerophon           | big damage + steals HP                  | 40 |
+| 5          | Rule Breaker          | big damage + steals MP                  | 40 |
+| 6          | Tsubame Gaeshi        | triple hit with guaranteed critical hit | 50 |
+| 7          | Nine Lives            | very big damage                         | 50 |
+
+**Enemy patterns**
+
+Enemies do not choose freely: each one repeats the action sequence of its Servant.
+When it cannot afford the planned action, it uses the first action it can afford instead.
+Knowing the pattern tells you when to Defend, Break or expect a Noble Phantasm.
+
+A = Attack, D = Defense, B = Break, S = Skill, NP = Noble Phantasm.
+
+| Enemy             | Pattern (loops)               |
+|-------------------|-------------------------------|
+| Artoria Pendragon | A, D, A, B, S, A, D, A, B, NP |
+| Emiya             | A, B, D, S, A, B, D, NP       |
+| Cu Chulainn       | A, D, B, S, A, D, B, NP       |
+| Medusa            | A, B, D, D, S, A, B, D, D, NP |
+| Medea             | D, A, D, B, S, D, A, D, B, NP |
+| Sasaki Kojiro     | B, A, A, D, S, B, A, B, D, NP |
+| Heracles          | A, A, B, S, A, A, B, NP       |
 
 ## 4. Project structure and main classes
 
